@@ -60,9 +60,10 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCaptcha, login } from '@/api/auth'
+import { getCaptcha, getPublicKey, login } from '@/api/auth'
 import { useUserStore } from '@/store/user'
 import { usePermissionStore } from '@/store/permission'
+import { rsaEncrypt } from '@/utils/rsa'
 import type { CaptchaRes } from '@/api/auth'
 
 const router = useRouter()
@@ -97,7 +98,14 @@ const handleLogin = async () => {
   loading.value = true
   errorMsg.value = ''
   try {
-    const res = await login(form)
+    const { publicKey } = await getPublicKey()
+    const encryptedPassword = rsaEncrypt(form.password, publicKey)
+    const res = await login({
+      username: form.username,
+      password: encryptedPassword,
+      code: form.code,
+      uuid: form.uuid,
+    })
     userStore.setToken(res.token)
     userStore.setUserInfo(res.userInfo)
     permissionStore.setPerms(res.perms || [])

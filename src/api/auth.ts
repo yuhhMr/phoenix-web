@@ -20,6 +20,8 @@ export interface LoginRes {
 
 export const getCaptcha = (): Promise<CaptchaRes> => request.get('/auth/captcha')
 
+export const getPublicKey = (): Promise<{ publicKey: string }> => request.get('/auth/public-key')
+
 export const login = (data: LoginReq): Promise<LoginRes> => request.post('/auth/login', data)
 
 export const getUserInfo = (): Promise<any> => request.get('/auth/info')
