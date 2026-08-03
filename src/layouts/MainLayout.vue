@@ -64,6 +64,7 @@ const userStore = useUserStore()
 
 const menuRoutes = [
   { name: 'Dashboard', path: '/dashboard' },
+  { name: 'Monitor', path: '/monitor/online' },
   { name: 'System', path: '/system/user' },
 ]
 

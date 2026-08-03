@@ -22,6 +22,32 @@ const router = createRouter({
           meta: { title: '首页', icon: 'layout-dashboard' },
         },
         {
+          path: 'monitor',
+          name: 'Monitor',
+          redirect: '/monitor/online',
+          meta: { title: '监控运维', icon: 'monitor' },
+          children: [
+            {
+              path: 'online',
+              name: 'Online',
+              component: () => import('@/views/monitor/online/index.vue'),
+              meta: { title: '在线用户', perm: 'monitor:online:list' },
+            },
+            {
+              path: 'job',
+              name: 'Job',
+              component: () => import('@/views/monitor/job/index.vue'),
+              meta: { title: '定时任务', perm: 'monitor:job:list' },
+            },
+            {
+              path: 'log',
+              name: 'Log',
+              component: () => import('@/views/monitor/log/index.vue'),
+              meta: { title: '日志管理', perm: 'log:list' },
+            },
+          ],
+        },
+        {
           path: 'system',
           name: 'System',
           redirect: '/system/user',
@@ -62,6 +88,12 @@ const router = createRouter({
               name: 'Config',
               component: () => import('@/views/system/config/index.vue'),
               meta: { title: '参数设置', perm: 'system:config:list' },
+            },
+            {
+              path: 'notice',
+              name: 'Notice',
+              component: () => import('@/views/system/notice/index.vue'),
+              meta: { title: '消息中心', perm: 'system:notice:list' },
             },
           ],
         },
