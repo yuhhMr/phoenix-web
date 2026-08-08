@@ -20,4 +20,9 @@ export interface RolePageQuery {
 export const fetchRolePage = (params: RolePageQuery): Promise<PageRes<RoleItem>> =>
   request.get('/system/role', { params })
 
+export const createRole = (data: Partial<RoleItem>): Promise<number> => request.post('/system/role', data)
+
+export const updateRole = (data: Partial<RoleItem> & { roleId: number }): Promise<void> =>
+  request.put('/system/role', data)
+
 export const deleteRole = (id: number): Promise<void> => request.delete(`/system/role/${id}`)
