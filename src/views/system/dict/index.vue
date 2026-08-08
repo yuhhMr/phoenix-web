@@ -57,10 +57,12 @@ import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
 import AppModal from '@/components/AppModal.vue'
+import { usePermissionStore } from '@/store/permission'
 import { fetchDictTypePage, createDictType, updateDictType, deleteDictType, type DictTypeItem } from '@/api/dict'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<DictTypeItem>()
+const perm = usePermissionStore()
 
 const columns = [
   columnHelper.accessor('dictName', { header: '字典名称', size: 180 }),
@@ -71,10 +73,16 @@ const columns = [
     id: 'actions',
     header: '操作',
     size: 160,
-    cell: ({ row }) => h('div', { class: 'flex gap-3' }, [
-      h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
-      h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.dictTypeId) }, '删除'),
-    ]),
+    cell: ({ row }) => {
+      const btns = []
+      if (perm.hasPerm('system:dict:update')) {
+        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+      }
+      if (perm.hasPerm('system:dict:delete')) {
+        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.dictTypeId) }, '删除'))
+      }
+      return h('div', { class: 'flex gap-3' }, btns)
+    },
   }),
 ]
 

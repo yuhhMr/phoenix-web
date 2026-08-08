@@ -99,10 +99,12 @@ import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
 import AppModal from '@/components/AppModal.vue'
+import { usePermissionStore } from '@/store/permission'
 import { fetchUserPage, createUser, updateUser, deleteUser, updateUserStatus, type UserItem } from '@/api/user'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<UserItem>()
+const perm = usePermissionStore()
 
 const columns = [
   columnHelper.accessor('username', { header: '用户名', size: 160 }),
@@ -123,12 +125,19 @@ const columns = [
     id: 'actions',
     header: '操作',
     size: 200,
-    cell: ({ row }) =>
-      h('div', { class: 'flex gap-3' }, [
-        h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
-        h('button', { class: 'text-sm text-primary hover:underline', onClick: () => toggleStatus(row.original) }, row.original.status === '0' ? '停用' : '启用'),
-        h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.userId) }, '删除'),
-      ]),
+    cell: ({ row }) => {
+      const btns = []
+      if (perm.hasPerm('system:user:update')) {
+        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+      }
+      if (perm.hasPerm('system:user:update')) {
+        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => toggleStatus(row.original) }, row.original.status === '0' ? '停用' : '启用'))
+      }
+      if (perm.hasPerm('system:user:delete')) {
+        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.userId) }, '删除'))
+      }
+      return h('div', { class: 'flex gap-3' }, btns)
+    },
   }),
 ]
 

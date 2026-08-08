@@ -75,10 +75,12 @@ import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
 import AppModal from '@/components/AppModal.vue'
+import { usePermissionStore } from '@/store/permission'
 import { fetchRolePage, createRole, updateRole, deleteRole, type RoleItem } from '@/api/role'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<RoleItem>()
+const perm = usePermissionStore()
 
 const dataScopeMap: Record<number, string> = {
   1: '全部', 2: '自定义', 3: '本部门', 4: '本部门及以下', 5: '仅本人',
@@ -94,10 +96,16 @@ const columns = [
     id: 'actions',
     header: '操作',
     size: 160,
-    cell: ({ row }) => h('div', { class: 'flex gap-3' }, [
-      h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
-      h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.roleId) }, '删除'),
-    ]),
+    cell: ({ row }) => {
+      const btns = []
+      if (perm.hasPerm('system:role:update')) {
+        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+      }
+      if (perm.hasPerm('system:role:delete')) {
+        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.roleId) }, '删除'))
+      }
+      return h('div', { class: 'flex gap-3' }, btns)
+    },
   }),
 ]
 

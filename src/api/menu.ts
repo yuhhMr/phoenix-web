@@ -15,4 +15,6 @@ export interface MenuTreeItem {
 }
 
 export const fetchMenuTree = (): Promise<MenuTreeItem[]> => request.get('/system/menu/tree')
+export const createMenu = (data: Partial<MenuTreeItem>): Promise<number> => request.post('/system/menu', data)
+export const updateMenu = (data: Partial<MenuTreeItem>): Promise<void> => request.put('/system/menu', data)
 export const deleteMenu = (id: number): Promise<void> => request.delete(`/system/menu/${id}`)

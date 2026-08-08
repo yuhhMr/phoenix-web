@@ -8,9 +8,39 @@
       <span v-else class="w-4"></span>
       <span class="text-sm">{{ node.menuName }}</span>
       <span class="text-xs text-text-secondary">({{ typeLabel }} / {{ node.perms || '-' }})</span>
+      <span class="ml-auto flex gap-2">
+        <button
+          v-perm="'system:menu:create'"
+          class="text-xs text-primary hover:underline"
+          @click.stop="emits('add', node.menuId)"
+        >
+          新增
+        </button>
+        <button
+          v-perm="'system:menu:update'"
+          class="text-xs text-primary hover:underline"
+          @click.stop="emits('edit', node)"
+        >
+          编辑
+        </button>
+        <button
+          v-perm="'system:menu:delete'"
+          class="text-xs text-red-500 hover:underline"
+          @click.stop="emits('remove', node.menuId)"
+        >
+          删除
+        </button>
+      </span>
     </div>
     <ul v-if="hasChildren && expanded" class="pl-6 space-y-1">
-      <MenuTreeNode v-for="child in node.children" :key="child.menuId" :node="child" />
+      <MenuTreeNode
+        v-for="child in node.children"
+        :key="child.menuId"
+        :node="child"
+        @edit="(n) => emits('edit', n)"
+        @add="(pid) => emits('add', pid)"
+        @remove="(id) => emits('remove', id)"
+      />
     </ul>
   </li>
 </template>
@@ -20,6 +50,11 @@ import { computed, ref } from 'vue'
 import type { MenuTreeItem } from '@/api/menu'
 
 const props = defineProps<{ node: MenuTreeItem }>()
+const emits = defineEmits<{
+  edit: [node: MenuTreeItem]
+  add: [parentId: number]
+  remove: [id: number]
+}>()
 
 const expanded = ref(true)
 const hasChildren = computed(() => !!props.node.children?.length)

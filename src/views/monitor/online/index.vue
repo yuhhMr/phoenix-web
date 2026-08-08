@@ -27,10 +27,12 @@
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
+import { usePermissionStore } from '@/store/permission'
 import { fetchOnlinePage, kickOnlineUser, type OnlineUserItem } from '@/api/online'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<OnlineUserItem>()
+const perm = usePermissionStore()
 
 const columns = [
   columnHelper.accessor('username', { header: '用户名', size: 140 }),
@@ -42,10 +44,13 @@ const columns = [
     id: 'actions',
     header: '操作',
     size: 120,
-    cell: ({ row }) => h('button', {
-      class: 'text-sm text-red-500 hover:underline',
-      onClick: () => kick(row.original.jti, row.original.username),
-    }, '强退'),
+    cell: ({ row }) => {
+      if (!perm.hasPerm('monitor:online:kick')) return null
+      return h('button', {
+        class: 'text-sm text-red-500 hover:underline',
+        onClick: () => kick(row.original.jti, row.original.username),
+      }, '强退')
+    },
   }),
 ]
 
