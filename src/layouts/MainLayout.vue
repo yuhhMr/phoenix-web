@@ -40,7 +40,7 @@
       <header class="h-14 bg-surface border-b border-border flex items-center justify-between px-4">
         <h1 class="font-medium">{{ pageTitle }}</h1>
         <div class="flex items-center gap-4">
-          <span class="text-sm text-text-secondary">{{ userStore.userInfo?.nickname }}</span>
+          <span class="text-sm text-text-secondary">{{ userStore.userInfo?.nickname || userStore.userInfo?.username }}</span>
           <button class="text-sm text-primary hover:underline" @click="logout">退出</button>
         </div>
       </header>

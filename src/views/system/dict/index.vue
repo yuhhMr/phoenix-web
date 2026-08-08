@@ -18,6 +18,7 @@
       </select>
       <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">查询</button>
       <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
+      <button v-perm="'system:dict:create'" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto" @click="openCreate">新增</button>
     </div>
 
     <DataTable
@@ -28,6 +29,26 @@
       v-model:current="query.pageNum"
       :size="query.pageSize"
     />
+
+    <AppModal v-model="modalVisible" :title="isEdit ? '编辑字典' : '新增字典'" :loading="saving" @submit="save">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">字典名称</label>
+          <input v-model="form.dictName" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">字典类型</label>
+          <input v-model="form.dictType" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">状态</label>
+          <select v-model="form.status" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+            <option value="0">正常</option>
+            <option value="1">停用</option>
+          </select>
+        </div>
+      </div>
+    </AppModal>
   </div>
 </template>
 
@@ -35,7 +56,8 @@
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
-import { fetchDictTypePage, deleteDictType, type DictTypeItem } from '@/api/dict'
+import AppModal from '@/components/AppModal.vue'
+import { fetchDictTypePage, createDictType, updateDictType, deleteDictType, type DictTypeItem } from '@/api/dict'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<DictTypeItem>()
@@ -48,11 +70,11 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: '操作',
-    size: 120,
-    cell: ({ row }) => h('button', {
-      class: 'text-sm text-red-500 hover:underline',
-      onClick: () => remove(row.original.dictTypeId),
-    }, '删除'),
+    size: 160,
+    cell: ({ row }) => h('div', { class: 'flex gap-3' }, [
+      h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
+      h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.dictTypeId) }, '删除'),
+    ]),
   }),
 ]
 
@@ -60,6 +82,29 @@ const query = reactive({ pageNum: 1, pageSize: 10, dictName: '', status: '' })
 const list = ref<DictTypeItem[]>([])
 const total = ref(0)
 const loading = ref(false)
+
+const modalVisible = ref(false)
+const saving = ref(false)
+const isEdit = ref(false)
+const form = reactive<Partial<DictTypeItem>>({ dictTypeId: undefined, dictName: '', dictType: '', status: '0' })
+
+const resetForm = () => Object.assign(form, { dictTypeId: undefined, dictName: '', dictType: '', status: '0' })
+const openCreate = () => { isEdit.value = false; resetForm(); modalVisible.value = true }
+const openEdit = (row: DictTypeItem) => { isEdit.value = true; resetForm(); Object.assign(form, row); modalVisible.value = true }
+
+const save = async () => {
+  saving.value = true
+  try {
+    if (isEdit.value && form.dictTypeId) await updateDictType(form as any)
+    else await createDictType(form)
+    modalVisible.value = false
+    loadData()
+  } catch (e: any) {
+    alert(e.message || '保存失败')
+  } finally {
+    saving.value = false
+  }
+}
 
 const loadData = async () => {
   loading.value = true

@@ -21,4 +21,9 @@ export interface ConfigQuery {
 export const fetchConfigPage = (params: ConfigQuery): Promise<PageRes<ConfigItem>> =>
   request.get('/system/config/page', { params })
 
+export const createConfig = (data: Partial<ConfigItem>): Promise<number> => request.post('/system/config', data)
+
+export const updateConfig = (data: Partial<ConfigItem> & { configId: number }): Promise<void> =>
+  request.put('/system/config', data)
+
 export const deleteConfig = (id: number): Promise<void> => request.delete(`/system/config/${id}`)
