@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCaptcha, getPublicKey, login } from '@/api/auth'
+import { getCaptcha, getPublicKey, login, getLoginInfo } from '@/api/auth'
 import { useUserStore } from '@/store/user'
 import { usePermissionStore } from '@/store/permission'
 import { rsaEncrypt } from '@/utils/rsa'
@@ -107,8 +107,9 @@ const handleLogin = async () => {
       uuid: form.uuid,
     })
     userStore.setToken(res.token)
-    userStore.setUserInfo(res.userInfo)
-    permissionStore.setPerms(res.perms || [])
+    const info = await getLoginInfo()
+    userStore.setUserInfo({ userId: info.userId, username: info.username, nickname: info.nickname, root: info.root })
+    permissionStore.setPerms(info.perms || [])
     router.push('/')
   } catch (e: any) {
     errorMsg.value = e.message || '登录失败'

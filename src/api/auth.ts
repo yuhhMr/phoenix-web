@@ -14,7 +14,13 @@ export interface LoginReq {
 
 export interface LoginRes {
   token: string
-  userInfo: any
+}
+
+export interface LoginInfoRes {
+  userId: number
+  username: string
+  nickname: string
+  root: boolean
   perms: string[]
 }
 
@@ -24,4 +30,4 @@ export const getPublicKey = (): Promise<{ publicKey: string }> => request.get('/
 
 export const login = (data: LoginReq): Promise<LoginRes> => request.post('/auth/login', data)
 
-export const getUserInfo = (): Promise<any> => request.get('/auth/info')
+export const getLoginInfo = (): Promise<LoginInfoRes> => request.get('/auth/info')
