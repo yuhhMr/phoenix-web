@@ -36,6 +36,13 @@
       >
         重置
       </button>
+      <button
+        v-perm="'system:user:create'"
+        class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto"
+        @click="openCreate"
+      >
+        新增
+      </button>
     </div>
 
     <!-- 表格 -->
@@ -47,6 +54,43 @@
       v-model:current="query.current"
       :size="query.size"
     />
+
+    <!-- 新增/编辑 -->
+    <AppModal v-model="modalVisible" :title="isEdit ? '编辑用户' : '新增用户'" :loading="saving" @submit="save">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">用户名</label>
+          <input v-model="form.username" :disabled="isEdit" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div v-if="!isEdit">
+          <label class="block text-sm font-medium mb-1">初始密码</label>
+          <input v-model="form.password" type="password" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">昵称</label>
+          <input v-model="form.nickname" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">邮箱</label>
+          <input v-model="form.email" type="email" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">手机号</label>
+          <input v-model="form.phone" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">状态</label>
+          <select v-model="form.status" :disabled="isEdit" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+            <option value="0">正常</option>
+            <option value="1">停用</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">备注</label>
+          <textarea v-model="form.remark" rows="2" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+        </div>
+      </div>
+    </AppModal>
   </div>
 </template>
 
@@ -54,7 +98,8 @@
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
-import { fetchUserPage, deleteUser, updateUserStatus, type UserItem } from '@/api/user'
+import AppModal from '@/components/AppModal.vue'
+import { fetchUserPage, createUser, updateUser, deleteUser, updateUserStatus, type UserItem } from '@/api/user'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<UserItem>()
@@ -77,25 +122,12 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: '操作',
-    size: 160,
+    size: 200,
     cell: ({ row }) =>
-      h('div', { class: 'flex gap-2' }, [
-        h(
-          'button',
-          {
-            class: 'text-sm text-primary hover:underline',
-            onClick: () => toggleStatus(row.original),
-          },
-          row.original.status === '0' ? '停用' : '启用',
-        ),
-        h(
-          'button',
-          {
-            class: 'text-sm text-red-500 hover:underline',
-            onClick: () => remove(row.original.userId),
-          },
-          '删除',
-        ),
+      h('div', { class: 'flex gap-3' }, [
+        h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
+        h('button', { class: 'text-sm text-primary hover:underline', onClick: () => toggleStatus(row.original) }, row.original.status === '0' ? '停用' : '启用'),
+        h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.userId) }, '删除'),
       ]),
   }),
 ]
@@ -111,6 +143,61 @@ const query = reactive({
 const list = ref<UserItem[]>([])
 const total = ref(0)
 const loading = ref(false)
+
+const modalVisible = ref(false)
+const saving = ref(false)
+const isEdit = ref(false)
+const form = reactive<Partial<UserItem> & { password?: string }>({
+  userId: undefined,
+  username: '',
+  password: '',
+  nickname: '',
+  email: '',
+  phone: '',
+  status: '0',
+  remark: '',
+})
+
+const resetForm = () => {
+  form.userId = undefined
+  form.username = ''
+  form.password = ''
+  form.nickname = ''
+  form.email = ''
+  form.phone = ''
+  form.status = '0'
+  form.remark = ''
+}
+
+const openCreate = () => {
+  isEdit.value = false
+  resetForm()
+  modalVisible.value = true
+}
+
+const openEdit = (row: UserItem) => {
+  isEdit.value = true
+  resetForm()
+  Object.assign(form, row)
+  modalVisible.value = true
+}
+
+const save = async () => {
+  saving.value = true
+  try {
+    if (isEdit.value && form.userId) {
+      await updateUser({ userId: form.userId, nickname: form.nickname, email: form.email, phone: form.phone, remark: form.remark })
+    } else {
+      await createUser({ username: form.username, password: form.password, nickname: form.nickname, email: form.email, phone: form.phone, status: form.status, remark: form.remark })
+    }
+    modalVisible.value = false
+    loadData()
+  } catch (e: any) {
+    alert(e.message || '保存失败')
+  } finally {
+    saving.value = false
+  }
+}
 
 const loadData = async () => {
   loading.value = true

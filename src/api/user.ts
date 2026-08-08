@@ -21,6 +21,14 @@ export interface UserPageQuery extends PageQuery {
 export const fetchUserPage = (params: UserPageQuery): Promise<PageRes<UserItem>> =>
   request.get('/system/user', { params })
 
+export const fetchUserDetail = (id: number): Promise<UserItem> => request.get(`/system/user/${id}`)
+
+export const createUser = (data: Partial<UserItem> & { password: string }): Promise<number> =>
+  request.post('/system/user', data)
+
+export const updateUser = (data: Partial<UserItem> & { userId: number }): Promise<void> =>
+  request.put('/system/user', data)
+
 export const deleteUser = (id: number): Promise<void> => request.delete(`/system/user/${id}`)
 
 export const updateUserStatus = (id: number, status: string): Promise<void> =>
