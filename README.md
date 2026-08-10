@@ -38,6 +38,18 @@ npm run build
 
 # 4. 预览构建产物
 npm run preview
+
+# 5. 代码规范检查
+npm run lint
+
+# 6. 自动修复 ESLint 问题
+npm run lint:fix
+
+# 7. 格式化代码
+npm run format
+
+# 8. 单独类型检查（不生成产物）
+npm run type-check
 ```
 
 > **注意**：Vite 等工具以本地开发依赖形式安装（`node_modules/.bin/`），不要直接运行全局 `vite` 命令（会报 `Command 'vite' not found`）。开发请用 `npm run dev`，如需直接调用则使用 `npx vite`。
