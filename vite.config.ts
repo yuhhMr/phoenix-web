@@ -35,6 +35,9 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
+        // 后端无前缀路由（/auth/**、/system/**），必须剥掉 /api 前缀——
+        // 否则 8080/api/auth/captcha 直接 404（与 Jarvis-web 一致）
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
