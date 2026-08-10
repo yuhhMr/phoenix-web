@@ -1,8 +1,8 @@
 {
   "folders": [
     {
-      "path": "."
-    }
+      "path": ".",
+    },
   ],
   "settings": {
     // 统一使用项目自带的 TypeScript 语言服务（Volar 扩展读取此路径）
@@ -12,15 +12,15 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     // 对 Vue 文件使用 Volar（官方 Vue 语言支持）
     "[vue]": {
-      "editor.defaultFormatter": "Vue.volar"
+      "editor.defaultFormatter": "Vue.volar",
     },
     // JSON/JSONC 文件使用 VSCode 自带格式化
     "[json]": {
-      "editor.defaultFormatter": "vscode.json-language-features"
+      "editor.defaultFormatter": "vscode.json-language-features",
     },
     "[jsonc]": {
-      "editor.defaultFormatter": "vscode.json-language-features"
-    }
+      "editor.defaultFormatter": "vscode.json-language-features",
+    },
   },
   "extensions": {
     "recommendations": [
@@ -35,7 +35,7 @@
       // Tailwind CSS 类名智能提示
       "bradlc.vscode-tailwindcss",
       // Iconify 图标预览
-      "antfu.iconify"
-    ]
-  }
+      "antfu.iconify",
+    ],
+  },
 }

@@ -24,7 +24,6 @@
     },
     "types": ["vite/client", "unplugin-icons/types/vue"],
     "allowArbitraryExtensions": true,
-
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
