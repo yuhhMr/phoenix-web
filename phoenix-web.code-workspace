@@ -14,13 +14,6 @@
     "[vue]": {
       "editor.defaultFormatter": "Vue.volar",
     },
-    // JSON/JSONC 文件使用 VSCode 自带格式化
-    "[json]": {
-      "editor.defaultFormatter": "vscode.json-language-features",
-    },
-    "[jsonc]": {
-      "editor.defaultFormatter": "vscode.json-language-features",
-    },
   },
   "extensions": {
     "recommendations": [
