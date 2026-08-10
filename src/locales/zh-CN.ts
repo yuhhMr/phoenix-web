@@ -25,4 +25,16 @@ export default {
     dict: '字典管理',
     config: '参数设置',
   },
+  navbar: {
+    logout: '退出登录',
+  },
+  tagsView: {
+    close: '关闭',
+    closeOthers: '关闭其他',
+  },
+  notFound: {
+    title: '404',
+    message: '抱歉，你访问的页面不存在',
+    backHome: '返回首页',
+  },
 }

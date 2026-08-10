@@ -15,7 +15,12 @@ export const usePermissionStore = defineStore(
       return perms.value.includes(perm) || perms.value.includes('*:*:*')
     }
 
-    return { perms, setPerms, hasPerm }
+    /** 登出时由 userStore.logout 调用，避免各退出入口各自记得清理 */
+    const reset = () => {
+      perms.value = []
+    }
+
+    return { perms, setPerms, hasPerm, reset }
   },
   {
     persist: true,

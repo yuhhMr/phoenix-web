@@ -4,3 +4,8 @@
     <p class="text-text-secondary">Phoenix-Fast 管理端工作台</p>
   </div>
 </template>
+
+<script setup lang="ts">
+// keep-alive 按组件 name 缓存，须与路由 name 对齐（约定见 router/index.ts）
+defineOptions({ name: 'Dashboard' })
+</script>
