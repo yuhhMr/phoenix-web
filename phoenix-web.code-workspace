@@ -10,10 +10,6 @@
     // 保存时自动格式化，配合项目 Prettier 配置
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    // 对 Vue 文件使用 Volar（官方 Vue 语言支持）
-    "[vue]": {
-      "editor.defaultFormatter": "Vue.volar",
-    },
   },
   "extensions": {
     "recommendations": [
