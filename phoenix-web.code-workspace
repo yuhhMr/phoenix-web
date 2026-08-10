@@ -5,8 +5,8 @@
     }
   ],
   "settings": {
-    // 统一使用项目自带的 TypeScript 语言服务，避免 VSCode 内置版本与 vue-tsc 不一致
-    "typescript.tsdk": "node_modules/typescript/lib",
+    // 统一使用项目自带的 TypeScript 语言服务（Volar 扩展读取此路径）
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
     // 保存时自动格式化，配合项目 Prettier 配置
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
