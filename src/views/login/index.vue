@@ -4,24 +4,52 @@
       <h2 class="login-title">Phoenix</h2>
 
       <form class="login-form" @submit.prevent="handleLogin">
-        <div class="field">
-          <IconUser class="field-icon" />
-          <input v-model.trim="form.username" type="text" :placeholder="$t('login.username')" autocomplete="username" />
-        </div>
+        <AppInput
+          v-model="form.username"
+          variant="glass"
+          size="lg"
+          :placeholder="$t('login.username')"
+          autocomplete="username"
+          @enter="handleLogin"
+        >
+          <template #prefix><IconUser /></template>
+        </AppInput>
 
-        <div class="field">
-          <IconLock class="field-icon" />
-          <input v-model="form.password" type="password" :placeholder="$t('login.password')"
-            autocomplete="current-password" />
-        </div>
+        <AppInput
+          v-model="form.password"
+          type="password"
+          variant="glass"
+          size="lg"
+          :placeholder="$t('login.password')"
+          autocomplete="current-password"
+          :clear-title="$t('login.clear')"
+          :show-title="$t('login.showPassword')"
+          :hide-title="$t('login.hidePassword')"
+          @enter="handleLogin"
+        >
+          <template #prefix><IconLock /></template>
+        </AppInput>
 
         <div class="captcha-row">
-          <div class="field captcha-field">
-            <IconShield class="field-icon" />
-            <input v-model.trim="form.captchaCode" type="text" :placeholder="$t('login.captcha')" maxlength="4" />
-          </div>
-          <img v-if="captchaImg" :src="captchaImg" class="captcha-img" :alt="$t('login.captcha')"
-            :title="$t('login.captchaRefresh')" @click="loadCaptcha" />
+          <AppInput
+            v-model="form.captchaCode"
+            variant="glass"
+            size="lg"
+            :placeholder="$t('login.captcha')"
+            :maxlength="4"
+            :clear-title="$t('login.clear')"
+            @enter="handleLogin"
+          >
+            <template #prefix><IconShield /></template>
+          </AppInput>
+          <img
+            v-if="captchaImg"
+            :src="captchaImg"
+            class="captcha-img"
+            :alt="$t('login.captcha')"
+            :title="$t('login.captchaRefresh')"
+            @click="loadCaptcha"
+          />
           <div v-else class="captcha-img captcha-placeholder" @click="loadCaptcha">
             {{ $t('login.captchaRefresh') }}
           </div>
@@ -34,9 +62,9 @@
 
         <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
 
-        <button type="submit" class="submit-btn" :disabled="loading">
+        <AppButton native-type="submit" size="lg" class="w-full tracking-[6px]" :loading="loading">
           {{ loading ? $t('login.loading') : $t('login.submit') }}
-        </button>
+        </AppButton>
       </form>
     </div>
 
@@ -47,9 +75,12 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import IconUser from '~icons/lucide/user'
 import IconLock from '~icons/lucide/lock'
 import IconShield from '~icons/lucide/shield-check'
+import AppInput from '@/components/AppInput.vue'
+import AppButton from '@/components/AppButton.vue'
 import { getCaptcha, getPublicKey, login, getLoginInfo } from '@/api/auth'
 import { useUserStore } from '@/store/user'
 import { usePermissionStore } from '@/store/permission'
@@ -59,6 +90,7 @@ import { getDeviceId } from '@/utils/device'
 const REMEMBER_KEY = 'phoenix-remember-username'
 
 const router = useRouter()
+const { t } = useI18n()
 const userStore = useUserStore()
 const permissionStore = usePermissionStore()
 
@@ -81,14 +113,18 @@ const loadCaptcha = async () => {
     captchaUuid.value = res.uuid
     form.captchaCode = ''
   } catch {
-    errorMsg.value = '验证码加载失败，点击刷新重试'
+    errorMsg.value = t('login.captchaLoadFailed')
     captchaImg.value = ''
   }
 }
 
 const handleLogin = async () => {
+  // 输入框 Enter 与表单原生 submit 会双触发，loading 兼作重入锁
+  if (loading.value) {
+    return
+  }
   if (!form.username || !form.password || !form.captchaCode) {
-    errorMsg.value = '请填写完整登录信息'
+    errorMsg.value = t('login.formIncomplete')
     return
   }
   loading.value = true
@@ -122,7 +158,7 @@ const handleLogin = async () => {
     const redirect = (router.currentRoute.value.query.redirect as string) || '/'
     router.push(redirect)
   } catch (e: any) {
-    errorMsg.value = e.message || '登录失败'
+    errorMsg.value = e.message || t('login.loginFailed')
     loadCaptcha()
   } finally {
     loading.value = false
@@ -146,7 +182,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 全屏背景 */
+/* 全屏背景（原型：设计/登录页.jpg） */
 .login-page {
   position: relative;
   width: 100%;
@@ -204,57 +240,19 @@ onMounted(() => {
   gap: 18px;
 }
 
-/* 带前缀图标的输入框 */
-.field {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.field-icon {
-  position: absolute;
-  left: 12px;
-  width: 16px;
-  height: 16px;
-  color: rgba(255, 255, 255, 0.75);
-  pointer-events: none;
-}
-
-.field input {
-  width: 100%;
-  height: 42px;
-  padding: 0 12px 0 36px;
-  box-sizing: border-box;
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.2s, background-color 0.2s;
-}
-
-.field input::placeholder {
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.field input:focus {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-color: rgba(96, 165, 250, 0.8);
-}
-
 .captcha-row {
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-.captcha-field {
+.captcha-row > :first-child {
   flex: 1;
 }
 
 .captcha-img {
   width: 112px;
-  height: 42px;
+  height: 44px;
   flex-shrink: 0;
   cursor: pointer;
   border-radius: 8px;
@@ -286,28 +284,6 @@ onMounted(() => {
   color: #fca5a5;
   font-size: 13px;
   text-align: center;
-}
-
-.submit-btn {
-  height: 44px;
-  border: none;
-  border-radius: 8px;
-  background-color: #2563eb;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  letter-spacing: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background-color: #1d4ed8;
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 .login-footer {
