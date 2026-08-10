@@ -53,7 +53,7 @@ npm run preview
 | `npm run lint`       | 执行 ESLint 检查                                                                  |
 | `npm run lint:fix`   | 自动修复可修复的 ESLint 问题                                                      |
 | `npm run format`     | 使用 Prettier 格式化全部源码                                                      |
-| `npm run prepare`    | 初始化 Husky 钩子（安装依赖后自动执行）                                           |
+| `npx husky init`     | 首次 clone 后手动初始化 Husky 钩子（已初始化后无需重复执行）                      |
 
 ## 环境变量
 

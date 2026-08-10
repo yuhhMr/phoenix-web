@@ -10,8 +10,7 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"**/*.{ts,vue,js,json,md,css}\"",
-    "prepare": "husky"
+    "format": "prettier --write \"**/*.{ts,vue,js,json,md,css}\""
   },
   "lint-staged": {
     "src/**/*.{ts,vue}": [
