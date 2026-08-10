@@ -1,0 +1,5 @@
+# Prettier 忽略文件列表
+# 这些文件不参与 npm run format / lint-staged 格式化
+
+# Vue 单文件组件由 Volar 在编辑器保存时格式化，避免与 Prettier 结果冲突
+*.vue
