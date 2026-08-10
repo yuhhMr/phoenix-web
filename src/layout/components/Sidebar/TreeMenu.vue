@@ -35,7 +35,7 @@
       </template>
     </button>
     <div v-show="open" class="space-y-1" :class="collapsed ? 'mt-1' : 'mt-1 pl-3'">
-      <SidebarItem
+      <TreeMenu
         v-for="child in item.children"
         :key="child.path"
         :item="child"
