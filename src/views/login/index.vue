@@ -130,6 +130,12 @@ const handleLogin = async () => {
 }
 
 onMounted(() => {
+  // 已登录用户访问登录页：直接回跳目标页，不重复登录
+  if (userStore.token) {
+    const redirect = (router.currentRoute.value.query.redirect as string) || '/'
+    router.replace(redirect)
+    return
+  }
   const remembered = localStorage.getItem(REMEMBER_KEY)
   if (remembered) {
     form.username = remembered
@@ -140,7 +146,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 全屏背景（原型：设计/登录页.jpg，背景图来自 Jarvis-web 同款） */
+/* 全屏背景 */
 .login-page {
   position: relative;
   width: 100%;
