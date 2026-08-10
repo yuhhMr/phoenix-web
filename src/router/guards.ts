@@ -9,20 +9,18 @@ import { APP_TITLE } from '@/config/app'
 NProgress.configure({ showSpinner: false })
 
 /**
- * 全局路由守卫 —— 全量对照 Jarvis-web src/router/guards.js 移植。
+ * 全局路由守卫。
  *
- * 与 Jarvis 的有意差异（结构性偏差，已定论）：
- * 1. 动态路由加载段（isLoadingRoutes/routesLoadingPromise/loadDynamicRoutes 及
- *    守卫中"已登录但动态路由未加载 → 先加载路由"分支）整体移除：
- *    后端契约（docs/api/openapi-m2-frozen.json）没有 listRouters 类端点，
- *    路由静态注册，菜单可见性由 meta.perm 前端过滤（router/utils.ts）。
- *    未来新增 /auth/routes 类端点时，把 Jarvis 的加载段插回"场景2"注释处即可。
- * 2. Jarvis 认证失败弹 ReLoginDialog 组件；phoenix 无此组件，
- *    401 统一由 api/request.ts 拦截器回收登录态并跳登录页，
- *    守卫内只需兜住 token 缺失的场景，对应函数一并省略。
- * 3. 无权访问时 Jarvis 跳 /403；phoenix 暂无 403 页面（只有 404），
- *    回退首页并打告警，403 页补齐后改回 next({ path: '/403', replace: true })。
- * 4. Jarvis 用 name='login' 判断登录页，phoenix 路由 name 是 'Login'，相应替换。
+ * 设计要点：
+ * 1. 路由静态注册，无动态路由加载段：当前后端契约未提供动态路由端点
+ *    （docs/api/openapi-m2-frozen.json），菜单可见性由 meta.perm 前端过滤
+ *    （router/utils.ts）。未来后端新增 /auth/routes 类端点时，在下方"场景2"
+ *    注释处插入动态路由加载段即可。
+ * 2. 认证失败不在守卫内弹重新登录对话框：401 统一由 api/request.ts 拦截器
+ *    回收登录态并跳登录页，守卫只需兜住 token 缺失的场景。
+ * 3. 无权访问时回退首页并打告警：当前暂无 403 页面（只有 404），
+ *    403 页补齐后改回 next({ path: '/403', replace: true })。
+ * 4. 登录页以路由 name 'Login' 判定。
  */
 
 /**
@@ -69,15 +67,15 @@ export function setupGuards(router: Router) {
       return { path: '/' }
     }
 
-    // [Jarvis 动态路由加载段已移除——见文件头差异说明 1。
-    //  phoenix 路由静态注册，此处无需等待路由加载。]
+    // [动态路由扩展点：未来后端提供 /auth/routes 类端点时在此加载路由。
+    //  当前路由静态注册，此处无需等待路由加载。]
 
     // ========== 场景3: 已登录（路由静态注册即已就绪）==========
     // 检查路由权限（使用 permissions 权限标识）
     const userPermissions: string[] = userStore.userInfo?.perms || []
     if (!checkRoutePermission(to, userPermissions)) {
       console.warn('[路由守卫] 无权访问:', to.path)
-      // 无 403 页，先回退首页（差异说明 3）
+      // 无 403 页，先回退首页（见文件头说明 3）
       return { path: '/', replace: true }
     }
 
@@ -90,8 +88,8 @@ export function setupGuards(router: Router) {
     // 站点标题统一由配置下发，页面标题拼在前面
     document.title = to.meta.title ? `${to.meta.title} - ${APP_TITLE}` : APP_TITLE
 
-    // 添加标签页（排除登录页等不需要标签页的路由）——对照 Jarvis afterEach；
-    // 另保留 phoenix 的 meta.noTagsView 约定（404 等路由显式声明不进页签）
+    // 添加标签页（排除登录页等不需要标签页的路由）；
+    // 另支持 meta.noTagsView 约定（404 等路由显式声明不进页签）
     const noTabRoutes = ['Login', 'NotFound']
     if (!noTabRoutes.includes(String(to.name)) && !to.meta.noTagsView) {
       const tabsStore = useTabsStore()

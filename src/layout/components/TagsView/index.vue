@@ -25,7 +25,7 @@
     </div>
   </div>
 
-  <!-- 右键菜单：teleport 到 body 避免页签栏 overflow 裁剪（同 Jarvis） -->
+  <!-- 右键菜单：teleport 到 body 避免页签栏 overflow 裁剪 -->
   <Teleport to="body">
     <ul
       v-show="contextMenu.visible"
@@ -53,13 +53,13 @@
 
 <script setup lang="ts">
 /**
- * 页签栏 —— 全量对照 Jarvis-web src/layout/components/TagsView/index.vue 移植
- * （右键菜单五项以 Jarvis 实际项为准：刷新当前页/关闭其他/关闭全部/关闭左侧/关闭右侧，
- *  单个关闭由页签上的 × 承担；phoenix 旧版只有关闭/关闭其他，本次按 Jarvis 补齐）。
+ * 页签栏。
+ * 右键菜单五项：刷新当前页/关闭其他/关闭全部/关闭左侧/关闭右侧，
+ * 单个关闭由页签上的 × 承担。
  *
- * 差异仅两层转换：Element el-scrollbar/el-icon → 原生滚动容器 + lucide 图标；
- * CSS 变量样式 → Tailwind 令牌。交互逻辑逐项一致（含 Jarvis 的 hasLeftTabs/hasRightTabs
- * 按"当前激活页"而非"右键目标页"计算禁用态这一细节，照搬不改）。
+ * 样式为原生滚动容器 + lucide 图标 + Tailwind 令牌。一个交互细节：
+ * hasLeftTabs/hasRightTabs 按"当前激活页"而非"右键目标页"计算禁用态，
+ * 有意保留该行为。
  */
 import { computed, watch, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -94,7 +94,7 @@ function menuItemClass(disabled: boolean) {
   ]
 }
 
-// 计算是否有左侧/右侧标签页（对照 Jarvis：基于当前激活页计算）
+// 计算是否有左侧/右侧标签页（基于当前激活页计算）
 const hasLeftTabs = computed(() => {
   if (!activeTab.value || tabs.value.length <= 1) return false
   const currentIndex = tabs.value.findIndex((tab) => tab.path === activeTab.value)

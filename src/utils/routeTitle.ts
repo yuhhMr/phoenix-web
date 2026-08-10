@@ -1,8 +1,8 @@
 import i18n from '@/locales'
 
 /**
- * 路由标题解析 —— 对照 Jarvis-web src/utils/routeTitle.js 移植。
- * Jarvis 走 @/hooks/useI18n 的全局 t；phoenix 直接用 i18n 实例的 global.t（等价）。
+ * 路由标题解析。
+ * 直接用 i18n 实例的 global.t 翻译（不经组合式 hook，store 等组件外场景同样可用）。
  *
  * 优先级：meta.title（直写标题）→ meta.titleKey（i18n 翻译）→ 路由 name → 兜底文案。
  */

@@ -13,8 +13,8 @@ import { setupGuards } from './guards'
  * - noTagsView: 为 true 时不生成 TagsView 页签（如 404）
  *
  * ── 为什么不做后端动态路由 ──
- * 后端契约已冻结（docs/api/openapi-m2-frozen.json），其中没有 Jarvis 的
- * listRouters 类端点，拿不到服务端菜单树。因此路由静态注册，
+ * 后端契约已冻结（docs/api/openapi-m2-frozen.json），其中没有动态路由/
+ * 服务端菜单树类端点，拿不到服务端菜单树。因此路由静态注册，
  * 菜单按 meta.perm 前端过滤（router/utils.ts buildMenuTree）。
  * 扩展点：未来后端提供 /auth/routes 类端点时，在 guards.ts 的 token
  * 校验通过后动态 addRoute，本表退化为登录/404 等公共路由。
@@ -26,17 +26,17 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('@/views/login/index.vue'),
-      meta: { public: true },
+      meta: { public: true, title: '登录' },
     },
     {
       path: '/',
       component: () => import('@/layout/index.vue'),
-      redirect: '/dashboard',
+      redirect: '/index',
       children: [
         {
-          path: 'dashboard',
-          name: 'Dashboard',
-          component: () => import('@/views/dashboard/index.vue'),
+          path: 'index',
+          name: 'Index',
+          component: () => import('@/views/index.vue'),
           meta: { title: '首页', icon: 'layout-dashboard' },
         },
         {

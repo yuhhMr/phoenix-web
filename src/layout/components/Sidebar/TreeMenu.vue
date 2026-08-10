@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 /**
- * 递归菜单项（参照 Jarvis-web TreeMenu.vue，样式 Tailwind 重写）。
+ * 递归菜单项（Tailwind 样式）。
  * 展开状态放组件本地而非全局 store：目录层级少（当前仅两级），
  * 本地 ref + 路由联动已足够，无需引入跨组件状态。
  */

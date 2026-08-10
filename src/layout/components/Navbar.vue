@@ -10,7 +10,7 @@
         <icon-lucide-panel-left-open v-else class="w-5 h-5" />
       </button>
 
-      <!-- 面包屑导航（对照 Jarvis：优先菜单树查完整路径，回退 route.matched） -->
+      <!-- 面包屑导航（优先菜单树查完整路径，回退 route.matched） -->
       <nav class="flex items-center gap-1 text-sm min-w-0">
         <template v-for="item in breadcrumb" :key="item.path">
           <span v-if="!item.isFirst" class="text-text-secondary">/</span>
@@ -27,8 +27,7 @@
     </div>
 
     <div class="flex items-center gap-1.5">
-      <!-- 全屏切换（对照 Jarvis；其 hooks/useFullscreen 只是 vueuse useFullscreen 的
-           薄封装，这里直接用 vueuse，等价） -->
+      <!-- 全屏切换（直接用 vueuse 的 useFullscreen，不再自封装 hook） -->
       <button
         class="w-8 h-8 flex items-center justify-center rounded-md text-text-secondary hover:text-text hover:bg-background transition-colors"
         :title="isFullscreen ? t('navbar.exitFullscreen') : t('navbar.fullscreen')"
@@ -38,9 +37,9 @@
         <icon-lucide-maximize v-else class="w-[18px] h-[18px]" />
       </button>
 
-      <!-- 消息通知铃铛：有意未搬——phoenix 后端 notice API 只有管理端 CRUD
-           （api/notice.ts），没有用户侧未读数/标记已读端点，Jarvis 该功能依赖
-           noticeStore.fetchUnreadCount/markAllAsRead，无端点可对接，待后端补齐后回补 -->
+      <!-- 消息通知铃铛：暂缺——后端 notice API 目前只有管理端 CRUD
+           （api/notice.ts），没有用户侧未读数/标记已读端点可对接，
+           待后端补齐后回补 -->
 
       <!-- 用户信息下拉：自绘实现（菜单项只有设置/退出两项，同项目既有约定——
            AppModal 同样自绘，不引入 ark-ui Menu） -->
@@ -59,8 +58,7 @@
           v-if="dropdownOpen"
           class="absolute right-0 top-full mt-1 w-36 bg-surface border border-border rounded-md shadow-lg py-1 z-50"
         >
-          <!-- "个人中心"项有意未搬：Jarvis 跳 /system/user/profile，
-               phoenix 路由表无该页面（本次不动 views），待页面补齐后恢复 -->
+          <!-- "个人中心"项暂缺：路由表无 /system/user/profile 页面，待页面补齐后恢复 -->
           <button
             class="w-full flex items-center gap-2 px-3 py-2 text-sm text-text hover:bg-background transition-colors"
             @click="handleUserCommand('settings')"
@@ -80,8 +78,7 @@
       </div>
     </div>
 
-    <!-- 退出确认框：自绘（对应 Jarvis 的 ElMessageBox.confirm；phoenix 无全局
-         confirm/toast 组件，确认文案与 Jarvis 一致，成功提示省略） -->
+    <!-- 退出确认框：自绘（项目无全局 confirm/toast 组件；成功提示省略） -->
     <Teleport to="body">
       <div v-if="logoutConfirmVisible" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
         <div class="bg-surface rounded-xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
@@ -105,14 +102,11 @@
 
 <script setup lang="ts">
 /**
- * 导航栏 —— 对照 Jarvis-web src/layout/components/Navbar.vue（383 行版）移植。
- * 逐项核对结果：
- * - 折叠钮 ✔ / 面包屑 ✔（菜单树查找 + matched 回退）/ 全屏 ✔ / 用户下拉 ✔
- * - 消息通知：未搬（无用户侧未读端点，见模板注释）
- * - 个人中心：未搬（无 profile 页面，见模板注释）
- * - Jarvis Navbar 没有"刷新"按钮——刷新在 TagsView 右键菜单（refreshTab），
- *   已随 TagsView 全量搬入，此处不重复添加
- * - 头像：phoenix 用户信息契约（LoginInfoRes）无 avatar 字段，只显示用户名
+ * 导航栏：折叠钮 / 面包屑（菜单树查找 + matched 回退）/ 全屏 / 用户下拉。
+ * - 消息通知：暂缺（无用户侧未读端点，见模板注释）
+ * - 个人中心：暂缺（无 profile 页面，见模板注释）
+ * - 不放"刷新"按钮：刷新在 TagsView 右键菜单（refreshTab），此处不重复
+ * - 头像：用户信息契约（LoginInfoRes）无 avatar 字段，只显示用户名
  */
 import { computed, ref } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
@@ -140,17 +134,16 @@ interface BreadcrumbItem {
 
 /**
  * 菜单树（面包屑查找的数据源）。
- * Jarvis 从 permissionStore.menuTree 读；phoenix 的 permission store 不引 router
- * （避免 store→router→guards→store 循环依赖），菜单树由 buildMenuTree 从静态路由
- * 现算，与 Sidebar 同源——perms 变化时 computed 自动重算。
+ * permission store 不引 router（避免 store→router→guards→store 循环依赖），
+ * 菜单树由 buildMenuTree 从静态路由现算，与 Sidebar 同源——perms 变化时 computed 自动重算。
  */
 const menuTree = computed<MenuItem[]>(() => {
   const layoutRoute = router.options.routes.find((r) => r.path === '/')
   return buildMenuTree(layoutRoute?.children ?? [], permissionStore.hasPerm)
 })
 
-// 从菜单树中查找路径对应的菜单项（对照 Jarvis findMenuPath；
-// MenuItem.title 在 buildMenuTree 时已解析，无需 Jarvis 的 meta.title/titleKey 二段判定）
+// 从菜单树中查找路径对应的菜单项；
+// MenuItem.title 在 buildMenuTree 时已解析，此处直接取用
 function findMenuPath(
   menus: MenuItem[],
   targetPath: string,

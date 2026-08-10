@@ -16,7 +16,7 @@ export default {
     loginFailed: '登录失败',
   },
   menu: {
-    dashboard: '首页',
+    index: '首页',
     system: '系统管理',
     user: '用户管理',
     role: '角色管理',
@@ -40,7 +40,7 @@ export default {
   route: {
     unknown: '未知页面',
   },
-  // 页签右键菜单（对照 Jarvis 的 tabs_* 五项，键名按本项目的嵌套风格组织）
+  // 页签右键菜单（五项，键名按本项目的嵌套风格组织）
   tabs: {
     refresh: '刷新当前页',
     closeOther: '关闭其他',
@@ -48,7 +48,7 @@ export default {
     closeLeft: '关闭左侧',
     closeRight: '关闭右侧',
   },
-  // 设置面板（对照 Jarvis 的 settings_* 系列）
+  // 设置面板
   settings: {
     title: '系统设置',
     interface: '界面设置',

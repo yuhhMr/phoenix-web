@@ -3,8 +3,8 @@
     <RouterView v-slot="{ Component }">
       <Transition name="fade" mode="out-in">
         <!-- keep-alive include 按组件 name 匹配：路由 name 与页面组件
-             defineOptions name 一一对齐（约定见 router/index.ts 顶部注释）。
-             key 拼 refreshKey（对照 Jarvis AppMain）：页签右键"刷新当前页"
+             defineOptions name 一一对应（约定见 router/index.ts 顶部注释）。
+             key 拼 refreshKey：页签右键"刷新当前页"
              让 refreshKey 自增 → key 变化 → 组件强制重挂载。
              未访问过的页面不在 include 里，首次加载即正常挂载。 -->
         <KeepAlive :include="cachedViews">
@@ -17,11 +17,9 @@
 
 <script setup lang="ts">
 /**
- * 主内容区 —— 对照 Jarvis-web src/layout/components/AppMain.vue 移植。
- * 差异说明：
- * - Jarvis 内嵌 NProgressBar 组件（watch-route 触发进度条）；
- *   phoenix 的进度条在 router/guards.ts 前后守卫直接驱动，此处不再重复挂载。
- * - 淡入淡出 Transition 是 phoenix 既有增强（Jarvis 无），保留。
+ * 主内容区。
+ * - 进度条不在此挂载：router/guards.ts 的前后守卫直接驱动 NProgress；
+ * - 页面切换带淡入淡出 Transition（短时长避免拖慢操作感，见 style 注释）。
  */
 import { computed } from 'vue'
 import { RouterView, useRoute } from 'vue-router'

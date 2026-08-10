@@ -2,13 +2,12 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 /**
- * 应用状态管理 —— 全量对照 Jarvis-web src/store/app.js 移植。
+ * 应用状态管理。
  *
- * 持久化：Jarvis 用自封装 utils/cache（sidebarKey/settingsKey），
- * 此处用 pinia-plugin-persistedstate（已批准的等价替换），key 即 store id 'app'。
+ * 持久化用 pinia-plugin-persistedstate，key 即 store id 'app'。
  *
- * settings 字段全量保留 Jarvis 形状；其中部分字段依赖 Jarvis 的
- * Element/CSS 变量主题体系，phoenix（Tailwind 静态令牌）暂只存值不生效，
+ * settings 中部分字段（主题模式/主题色等）依赖运行时可改写的主题变量层，
+ * 而本项目是 Tailwind 静态令牌，暂只存值不生效，
  * 逐项的接线状态见 Settings 面板组件内注释。
  */
 export interface AppSettings {
@@ -33,11 +32,11 @@ export interface AppSettings {
   messageNotify: boolean // 消息通知（Navbar 铃铛依赖用户侧未读端点，待接）
 }
 
-/** Jarvis 里 resetSettings 与初始值是同一份字面量，抽成函数避免两处漂移 */
+/** resetSettings 与初始值用同一份字面量，抽成函数避免两处漂移 */
 function defaultSettings(): AppSettings {
   return {
     theme: 'light',
-    themeColor: '#2563eb', // 对齐 phoenix tailwind.config.js 的 primary（Jarvis 为 #3b82f6）
+    themeColor: '#2563eb', // 与 tailwind.config.js 的 primary 一致
     showTagsView: true,
     fixedHeader: true,
     language: 'zh-CN',
@@ -124,7 +123,7 @@ export const useAppStore = defineStore(
     }
   },
   {
-    // 持久化存储（对照 Jarvis persist paths: sidebarCollapsed/settings）
+    // 持久化存储（只落 sidebarCollapsed/settings 两项）
     persist: {
       pick: ['sidebarCollapsed', 'settings'],
     },

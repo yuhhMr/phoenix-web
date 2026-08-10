@@ -5,7 +5,7 @@ import router from '@/router'
 /**
  * 统一请求封装。
  * <p>
- * 与后端契约（docs/api/openapi-m2-frozen.json）对齐的两个关键点：
+ * 实现上必须遵守后端契约（docs/api/openapi-m2-frozen.json）的两个关键点：
  * 1. 认证失败是 HTTP 200 + body code=401（过滤器层与全局异常处理器同契约），
  *    不是 HTTP 状态码——必须按 body code 判定并回收登录态；
  * 2. JWT 过期但会话存活时，后端放行并在 X-Refreshed-Token 响应头回发新 JWT

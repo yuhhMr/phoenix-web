@@ -55,9 +55,9 @@ import IconEye from '~icons/lucide/eye'
 import IconEyeOff from '~icons/lucide/eye-off'
 
 /**
- * 通用输入框（对齐 shadcn Input 的样式语义，Vue + Tailwind 实现）。
+ * 通用输入框（语义化样式封装，Vue + Tailwind 实现）。
  * <p>
- * 输入/按钮这类纯样式壳不需要 ark-ui 逻辑层（shadcn 同理），ark-ui 留给
+ * 输入/按钮这类纯样式壳不需要 ark-ui 逻辑层，ark-ui 留给
  * Dialog/Select 等有交互逻辑的组件（见 AppModal）。
  * variant="glass" 用于登录页磨砂卡片等深色背景场景。
  * </p>

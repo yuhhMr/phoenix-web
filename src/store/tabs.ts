@@ -4,25 +4,21 @@ import type { LocationQuery, RouteParams } from 'vue-router'
 import { getRouteTitle } from '@/utils/routeTitle'
 
 /**
- * 标签页（页签）状态管理 —— 全量对照 Jarvis-web src/store/tabs.js 移植。
+ * 标签页（页签）状态管理。
  *
- * ⚠️ 注意：此 store 不直接操作 router，路由跳转由组件层处理（Jarvis 原则保留），
+ * ⚠️ 注意：此 store 不直接操作 router，路由跳转由组件层处理，
  * 避免在 store 中引入 router，保持 store 的纯净性。
  *
- * 与 Jarvis 的有意差异（均在此显式说明）：
- * 1. 持久化：Jarvis 用自封装 utils/cache（localStorage key=JTabs），
- *    此处用 pinia-plugin-persistedstate（已批准的等价替换），storage key 即 store id 'tabs'。
- * 2. 首页路径：Jarvis 首页页签 path='/'（其 '/' 路由实体承载首页），
- *    phoenix 的 '/' 只是 redirect 壳、首页实体是 '/dashboard'，
- *    若照搬 '/' 会产生一个永远打不开的幻影首页页签，故首页判定统一走 HOME_PATH。
- * 3. keepAlive 语义：Jarvis 默认不缓存（meta.keepAlive===true 才缓存），
- *    phoenix 路由表约定默认缓存、显式 false 才跳过（见 router/index.ts 顶部注释），
- *    照搬 Jarvis 默认值会让现有页面缓存全部失效，故此处按 phoenix 约定取反。
- * 4. 文件/store 命名：沿用 Jarvis 的 tabs（phoenix 旧版的 tagsView 简化实现废弃）。
+ * 关键约定：
+ * 1. 持久化用 pinia-plugin-persistedstate，storage key 即 store id 'tabs'。
+ * 2. 首页判定统一走 HOME_PATH：'/' 只是 redirect 壳，首页实体是 '/index'；
+ *    页签路径必须是实体路由，否则产生一个永远打不开的幻影首页页签。
+ * 3. keepAlive 语义：路由表约定页面默认参与缓存、meta.keepAlive=false 显式关闭
+ *    （见 router/index.ts 顶部注释），此处按同一约定取缺省 true。
  */
 
 /** phoenix 首页实体路径（'/' 仅 redirect 到此） */
-export const HOME_PATH = '/dashboard'
+export const HOME_PATH = '/index'
 
 /** addTab/updateTabFromRoute 接受的最小路由形状（RouteLocationNormalized 天然兼容） */
 export interface RouteLike {
@@ -38,7 +34,7 @@ export interface RouteLike {
 }
 
 /**
- * 页签项。keepAlive 快照自路由 meta，放在 meta 字段下（与 Jarvis 一致）——
+ * 页签项。keepAlive 快照自路由 meta，放在 meta 字段下——
  * AppMain 的 keep-alive include 直接消费它，避免页签栏与缓存策略两处各自读路由。
  */
 export interface TabItem {
@@ -105,7 +101,7 @@ export const useTabsStore = defineStore(
         closable: route.path !== HOME_PATH, // 首页不可关闭
         query: route.query || {},
         params: route.params || {},
-        // 是否 keep-alive 缓存该页面（来自路由 meta；phoenix 约定缺省缓存，见文件头差异说明 3）
+        // 是否 keep-alive 缓存该页面（来自路由 meta；缺省缓存，见文件头约定 3）
         meta: { keepAlive: route.meta?.keepAlive !== false },
       }
 
@@ -191,8 +187,7 @@ export const useTabsStore = defineStore(
 
     /**
      * 更新所有标签页的标题（语言切换时调用）。
-     * 与 Jarvis 的差异：Jarvis 由 name 反推 titleKey（route_${name}），
-     * phoenix 在 addTab 时已快照 titleKey，直接拿快照重新翻译更不易错；
+     * addTab 时已快照 titleKey，直接拿快照重新翻译更不易错；
      * 无 titleKey 的页签（标题来自 meta.title 直写）保持原标题。
      */
     function updateTabsTitle() {
@@ -226,14 +221,13 @@ export const useTabsStore = defineStore(
     // 初始化时添加首页（layout 挂载时调用；页签已持久化时为空操作）
     function init() {
       if (tabs.value.length === 0) {
-        addTab({ path: HOME_PATH, name: 'Dashboard', meta: { titleKey: 'menu.dashboard' } })
+        addTab({ path: HOME_PATH, name: 'Index', meta: { titleKey: 'menu.index' } })
       }
     }
 
     /**
      * 清空页签（登出时由 userStore.logout 调用）。
-     * Jarvis 的 clearAuth 不清页签 key——换账号会残留上一账号页签，
-     * phoenix 视为问题修正：页签与用户态同生命周期。
+     * 页签与用户态同生命周期：换账号登录时绝不能残留上一账号的页签。
      */
     function reset() {
       tabs.value = []
@@ -259,7 +253,7 @@ export const useTabsStore = defineStore(
     }
   },
   {
-    // 页签持久化：刷新浏览器后页签栏不丢（等价 Jarvis 的 tabsKey 持久化）
+    // 页签持久化：刷新浏览器后页签栏不丢
     persist: {
       pick: ['tabs', 'activeTab'],
     },

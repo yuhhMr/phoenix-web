@@ -10,11 +10,11 @@ declare module 'vue-router' {
     public?: boolean
     /** 菜单/面包屑/页签/document.title 共用的中文标题；无 title 的路由不进菜单和页签 */
     title?: string
-    /** i18n 标题键（对照 Jarvis 的 titleKey；多语言切换时页签据此重新翻译，当前路由表多为直写 title） */
+    /** i18n 标题键（多语言切换时页签据此重新翻译，当前路由表多为直写 title） */
     titleKey?: string
-    /** 外链地址（配合 InnerLink 容器以 iframe 内嵌展示，对照 Jarvis 的 meta.link） */
+    /** 外链地址（配合 InnerLink 容器以 iframe 内嵌展示） */
     link?: string
-    /** 详情页等场景指定侧边栏高亮的菜单路径（对照 Jarvis 的 meta.activeMenu，当前未使用） */
+    /** 详情页等场景指定侧边栏高亮的菜单路径（当前未使用） */
     activeMenu?: string
     /** lucide 图标名（kebab-case），由 Sidebar/iconMap.ts 静态映射为组件 */
     icon?: string

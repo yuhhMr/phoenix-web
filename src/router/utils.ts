@@ -3,12 +3,11 @@ import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
 /**
  * 路由工具函数。
  *
- * 前半部分（buildRedirectPath … buildBreadcrumb）全量对照 Jarvis-web src/router/utils.js
- * 移植——phoenix 契约冻结、暂无 listRouters 类动态路由端点，这些工具当前主要服务
- * 守卫的 redirect 构建与权限校验，并为将来 /auth/routes 端点留好形状
+ * 前半部分（buildRedirectPath … buildBreadcrumb）当前主要服务守卫的 redirect
+ * 构建与权限校验，并为将来后端动态路由端点（/auth/routes 类）留好形状
  * （动态路由生成时 generateTree/filterPermissionRoutes 可直接复用）。
  *
- * 后半部分（MenuItem/buildMenuTree）是 phoenix 静态路由下的菜单构建，
+ * 后半部分（MenuItem/buildMenuTree）是静态路由下的菜单构建，
  * 供 Sidebar/Navbar 消费。
  */
 
@@ -86,8 +85,7 @@ export function getFullPath(parentPath: string, childPath: string): string {
 
 /**
  * 检查用户是否有权限访问指定路由。
- * 与 Jarvis 的差异：Jarvis 的 meta.perms 是权限标识数组（满足其一即可），
- * phoenix 路由表约定单条 meta.perm（见 router/index.ts 顶部注释），判定逻辑等价。
+ * 路由表约定单条 meta.perm（见 router/index.ts 顶部注释），命中即放行。
  * @param route - 路由对象
  * @param permissions - 用户权限数组
  * @returns 是否有权限
@@ -108,7 +106,7 @@ export function hasRoutePermission(
 }
 
 /**
- * 过滤权限路由（递归裁剪无权限节点；注意会原地改写 children，与 Jarvis 一致——
+ * 过滤权限路由（递归裁剪无权限节点；注意会原地改写 children——
  * 设计用途是消费动态生成的路由树，不要直接对 router.options.routes 使用）
  * @param routes - 路由数组
  * @param permissions - 用户权限数组

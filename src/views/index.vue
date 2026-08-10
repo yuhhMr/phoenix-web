@@ -6,6 +6,6 @@
 </template>
 
 <script setup lang="ts">
-// keep-alive 按组件 name 缓存，须与路由 name 对齐（约定见 router/index.ts）
-defineOptions({ name: 'Dashboard' })
+// keep-alive 按组件 name 缓存，组件 name 须与路由 name 一致（约定见 router/index.ts）
+defineOptions({ name: 'Index' })
 </script>

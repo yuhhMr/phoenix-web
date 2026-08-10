@@ -16,7 +16,7 @@ import { computed } from 'vue'
 import IconLoading from '~icons/lucide/loader-circle'
 
 /**
- * 通用按钮（对齐 shadcn Button 的 variant/size 语义，Vue + Tailwind 实现）。
+ * 通用按钮（variant/size 两级语义化变体，Vue + Tailwind 实现）。
  * 纯样式壳，不需要 ark-ui 逻辑层（见 AppInput 注释）。
  */
 const props = withDefaults(

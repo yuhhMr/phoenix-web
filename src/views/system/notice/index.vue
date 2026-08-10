@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-// keep-alive 按组件 name 缓存，须与路由 name 对齐（约定见 router/index.ts）
+// keep-alive 按组件 name 缓存，组件 name 须与路由 name 一致（约定见 router/index.ts）
 defineOptions({ name: 'Notice' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
