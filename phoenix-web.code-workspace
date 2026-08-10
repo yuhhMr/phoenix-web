@@ -6,7 +6,7 @@
   ],
   "settings": {
     // 统一使用项目自带的 TypeScript 语言服务，避免 VSCode 内置版本与 vue-tsc 不一致
-    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.tsdk.path": "node_modules/typescript/lib",
     // 保存时自动格式化，配合项目 Prettier 配置
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -17,9 +17,6 @@
     // Tailwind CSS 智能提示
     "tailwindCSS.includeLanguages": {
       "vue": "html"
-    },
-    "[json]": {
-      "editor.defaultFormatter": "vscode.json-language-features"
     }
   },
   "extensions": {
