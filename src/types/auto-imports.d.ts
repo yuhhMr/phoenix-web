@@ -9,7 +9,11 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue').EffectScope
+  const HOME_PATH: typeof import('../store/tabs').HOME_PATH
+  const PRESET_COLORS: typeof import('../utils/theme').PRESET_COLORS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
+  const addDisplayTitle: typeof import('../utils/routeTitle').addDisplayTitle
+  const applyThemeMode: typeof import('../utils/theme').applyThemeMode
   const asyncComputed: typeof import('@vueuse/core').asyncComputed
   const autoResetRef: typeof import('@vueuse/core').autoResetRef
   const computed: typeof import('vue').computed
@@ -45,6 +49,7 @@ declare global {
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const getDeviceId: typeof import('../utils/device').getDeviceId
+  const getRouteTitle: typeof import('../utils/routeTitle').getRouteTitle
   const h: typeof import('vue').h
   const ignorableWatch: typeof import('@vueuse/core').ignorableWatch
   const inject: typeof import('vue').inject
@@ -268,7 +273,7 @@ declare global {
   const useStyleTag: typeof import('@vueuse/core').useStyleTag
   const useSupported: typeof import('@vueuse/core').useSupported
   const useSwipe: typeof import('@vueuse/core').useSwipe
-  const useTagsViewStore: typeof import('../store/tagsView').useTagsViewStore
+  const useTabsStore: typeof import('../store/tabs').useTabsStore
   const useTemplateRef: typeof import('vue').useTemplateRef
   const useTemplateRefsList: typeof import('@vueuse/core').useTemplateRefsList
   const useTextDirection: typeof import('@vueuse/core').useTextDirection
@@ -326,8 +331,14 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { TagView } from '../store/tagsView'
-  import('../store/tagsView')
+  export type { AppSettings } from '../store/app'
+  import('../store/app')
+  // @ts-ignore
+  export type { RouteLike, TabItem } from '../store/tabs'
+  import('../store/tabs')
+  // @ts-ignore
+  export type { RouteTitleSource } from '../utils/routeTitle'
+  import('../utils/routeTitle')
 }
 
 // for vue template auto import
@@ -336,7 +347,11 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly HOME_PATH: UnwrapRef<typeof import('../store/tabs')['HOME_PATH']>
+    readonly PRESET_COLORS: UnwrapRef<typeof import('../utils/theme')['PRESET_COLORS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
+    readonly addDisplayTitle: UnwrapRef<typeof import('../utils/routeTitle')['addDisplayTitle']>
+    readonly applyThemeMode: UnwrapRef<typeof import('../utils/theme')['applyThemeMode']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -372,6 +387,7 @@ declare module 'vue' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly getDeviceId: UnwrapRef<typeof import('../utils/device')['getDeviceId']>
+    readonly getRouteTitle: UnwrapRef<typeof import('../utils/routeTitle')['getRouteTitle']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
@@ -595,7 +611,7 @@ declare module 'vue' {
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
     readonly useSupported: UnwrapRef<typeof import('@vueuse/core')['useSupported']>
     readonly useSwipe: UnwrapRef<typeof import('@vueuse/core')['useSwipe']>
-    readonly useTagsViewStore: UnwrapRef<typeof import('../store/tagsView')['useTagsViewStore']>
+    readonly useTabsStore: UnwrapRef<typeof import('../store/tabs')['useTabsStore']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTemplateRefsList: UnwrapRef<typeof import('@vueuse/core')['useTemplateRefsList']>
     readonly useTextDirection: UnwrapRef<typeof import('@vueuse/core')['useTextDirection']>

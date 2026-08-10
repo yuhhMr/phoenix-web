@@ -27,10 +27,42 @@ export default {
   },
   navbar: {
     logout: '退出登录',
+    settings: '系统设置',
+    fullscreen: '全屏',
+    exitFullscreen: '退出全屏',
+    logoutConfirmTitle: '提示',
+    logoutConfirmMessage: '确定退出登录吗？',
   },
-  tagsView: {
-    close: '关闭',
-    closeOthers: '关闭其他',
+  common: {
+    confirm: '确定',
+    cancel: '取消',
+  },
+  route: {
+    unknown: '未知页面',
+  },
+  // 页签右键菜单（对照 Jarvis 的 tabs_* 五项，键名按本项目的嵌套风格组织）
+  tabs: {
+    refresh: '刷新当前页',
+    closeOther: '关闭其他',
+    closeAll: '关闭全部',
+    closeLeft: '关闭左侧',
+    closeRight: '关闭右侧',
+  },
+  // 设置面板（对照 Jarvis 的 settings_* 系列）
+  settings: {
+    title: '系统设置',
+    interface: '界面设置',
+    themeMode: '主题模式',
+    light: '浅色',
+    dark: '深色',
+    themeColor: '主题色',
+    language: '语言设置',
+    systemLanguage: '系统语言',
+    langZhCN: '简体中文',
+    other: '其他设置',
+    messageNotify: '消息通知',
+    reset: '恢复默认',
+    save: '保存',
   },
   notFound: {
     title: '404',

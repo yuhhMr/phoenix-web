@@ -1,57 +1,51 @@
 <template>
-  <div class="h-9 bg-surface border-b border-border flex items-center gap-1 px-2 overflow-x-auto shrink-0">
-    <div
-      v-for="tag in tagsViewStore.visitedViews"
-      :key="tag.path"
-      class="flex items-center gap-1 h-6 px-2 rounded border text-xs cursor-pointer select-none whitespace-nowrap transition-colors"
-      :class="
-        tag.path === route.path
-          ? 'bg-primary text-surface border-primary'
-          : 'text-text-secondary border-border hover:text-primary hover:border-primary'
-      "
-      @click="go(tag)"
-      @contextmenu.prevent="openContextMenu($event, tag)"
-    >
-      <span>{{ tag.title }}</span>
-      <!-- 当前页签不可关：关闭后无处落脚，且容易误触丢掉正在操作的页面 -->
-      <button
-        v-if="tag.path !== route.path"
-        class="rounded-full p-0.5 hover:bg-black/10 transition-colors"
-        @click.stop="closeTag(tag)"
+  <div class="h-9 bg-surface border-b border-border shadow-sm shrink-0">
+    <div class="flex items-center h-full px-1 py-0.5 gap-1 overflow-x-auto whitespace-nowrap">
+      <div
+        v-for="tab in tabs"
+        :key="tab.path"
+        class="inline-flex items-center h-[26px] px-2 text-xs border rounded-md cursor-pointer select-none transition-colors"
+        :class="
+          activeTab === tab.path
+            ? 'bg-primary text-surface border-primary'
+            : 'text-text-secondary border-border bg-surface hover:text-primary hover:border-primary'
+        "
+        @click="handleTabClick(tab)"
+        @contextmenu.prevent="handleContextMenu($event, tab)"
       >
-        <icon-lucide-x class="w-3 h-3" />
-      </button>
+        <span class="mr-1">{{ tab.title }}</span>
+        <component
+          :is="IconX"
+          v-if="tab.closable"
+          class="w-3.5 h-3.5 rounded-full opacity-70 hover:opacity-100"
+          :class="activeTab === tab.path ? 'hover:bg-white/25' : 'hover:bg-black/10'"
+          @click.stop="handleTabRemove(tab.path)"
+        />
+      </div>
     </div>
   </div>
 
-  <!-- 右键菜单：teleport 到 body 避免 overflow-x-auto 裁剪 -->
+  <!-- 右键菜单：teleport 到 body 避免页签栏 overflow 裁剪（同 Jarvis） -->
   <Teleport to="body">
     <ul
-      v-if="contextMenu.visible"
-      :style="{ left: contextMenu.left + 'px', top: contextMenu.top + 'px' }"
-      class="fixed z-50 py-1 min-w-28 bg-surface border border-border rounded-md shadow-lg text-sm"
+      v-show="contextMenu.visible"
+      :style="contextMenu.style"
+      class="fixed z-[3000] py-1 list-none bg-surface border border-border rounded-md shadow-lg text-[13px]"
     >
-      <li
-        class="px-3 py-1.5 transition-colors"
-        :class="
-          contextMenu.target?.path === route.path
-            ? 'text-text-secondary/50 cursor-not-allowed'
-            : 'text-text hover:bg-background cursor-pointer'
-        "
-        @click="closeFromMenu"
-      >
-        {{ t('tagsView.close') }}
+      <li :class="menuItemClass(false)" @click="handleCommand('refresh')">
+        <component :is="IconRefresh" class="w-3.5 h-3.5 mr-2" />{{ t('tabs.refresh') }}
       </li>
-      <li
-        class="px-3 py-1.5 transition-colors"
-        :class="
-          tagsViewStore.visitedViews.length <= 1
-            ? 'text-text-secondary/50 cursor-not-allowed'
-            : 'text-text hover:bg-background cursor-pointer'
-        "
-        @click="closeOthersFromMenu"
-      >
-        {{ t('tagsView.closeOthers') }}
+      <li :class="menuItemClass(tabs.length <= 1)" @click="handleCommand('closeOther')">
+        <component :is="IconCloseOther" class="w-3.5 h-3.5 mr-2" />{{ t('tabs.closeOther') }}
+      </li>
+      <li :class="menuItemClass(tabs.length <= 1)" @click="handleCommand('closeAll')">
+        <component :is="IconCloseAll" class="w-3.5 h-3.5 mr-2" />{{ t('tabs.closeAll') }}
+      </li>
+      <li :class="menuItemClass(!hasLeftTabs)" @click="handleCommand('closeLeft')">
+        <component :is="IconCloseLeft" class="w-3.5 h-3.5 mr-2" />{{ t('tabs.closeLeft') }}
+      </li>
+      <li :class="menuItemClass(!hasRightTabs)" @click="handleCommand('closeRight')">
+        <component :is="IconCloseRight" class="w-3.5 h-3.5 mr-2" />{{ t('tabs.closeRight') }}
       </li>
     </ul>
   </Teleport>
@@ -59,71 +53,169 @@
 
 <script setup lang="ts">
 /**
- * 页签栏（参照 Jarvis-web TagsView，逻辑裁剪到"关闭/关闭其他"两项）。
- * 页签数据在 store 持久化；组件只负责登记当前路由与交互。
+ * 页签栏 —— 全量对照 Jarvis-web src/layout/components/TagsView/index.vue 移植
+ * （右键菜单五项以 Jarvis 实际项为准：刷新当前页/关闭其他/关闭全部/关闭左侧/关闭右侧，
+ *  单个关闭由页签上的 × 承担；phoenix 旧版只有关闭/关闭其他，本次按 Jarvis 补齐）。
+ *
+ * 差异仅两层转换：Element el-scrollbar/el-icon → 原生滚动容器 + lucide 图标；
+ * CSS 变量样式 → Tailwind 令牌。交互逻辑逐项一致（含 Jarvis 的 hasLeftTabs/hasRightTabs
+ * 按"当前激活页"而非"右键目标页"计算禁用态这一细节，照搬不改）。
  */
-import { reactive, watch, onMounted, onUnmounted } from 'vue'
+import { computed, watch, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { useTagsViewStore, type TagView } from '@/store/tagsView'
+import { useTabsStore, type TabItem } from '@/store/tabs'
+import IconX from '~icons/lucide/x'
+import IconRefresh from '~icons/lucide/rotate-cw'
+import IconCloseOther from '~icons/lucide/circle-x'
+import IconCloseAll from '~icons/lucide/folder-x'
+import IconCloseLeft from '~icons/lucide/arrow-left'
+import IconCloseRight from '~icons/lucide/arrow-right'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
-const tagsViewStore = useTagsViewStore()
+const tabsStore = useTabsStore()
 
-// 路由变化即登记页签（store 内幂等）；immediate 覆盖首次进入/刷新场景
+// 计算属性
+const tabs = computed(() => tabsStore.getTabs)
+const activeTab = computed({
+  get: () => tabsStore.getActiveTab,
+  set: (val: string) => tabsStore.setActiveTab(val),
+})
+
+// 右键菜单项样式（函数式生成：禁用态直接不带 hover 类，避免同级 specificity 覆盖问题）
+function menuItemClass(disabled: boolean) {
+  return [
+    'flex items-center px-4 py-1.5 transition-colors',
+    disabled
+      ? 'text-text-secondary/50 cursor-not-allowed'
+      : 'text-text cursor-pointer hover:bg-background',
+  ]
+}
+
+// 计算是否有左侧/右侧标签页（对照 Jarvis：基于当前激活页计算）
+const hasLeftTabs = computed(() => {
+  if (!activeTab.value || tabs.value.length <= 1) return false
+  const currentIndex = tabs.value.findIndex((tab) => tab.path === activeTab.value)
+  return currentIndex > 0
+})
+
+const hasRightTabs = computed(() => {
+  if (!activeTab.value || tabs.value.length <= 1) return false
+  const currentIndex = tabs.value.findIndex((tab) => tab.path === activeTab.value)
+  return currentIndex < tabs.value.length - 1
+})
+
+// 右键菜单
+const contextMenu = ref<{
+  visible: boolean
+  style: { left: string; top: string }
+  currentTab: TabItem | null
+}>({
+  visible: false,
+  style: { left: '0px', top: '0px' },
+  currentTab: null,
+})
+
+// 监听路由变化，更新标签页（immediate 覆盖首次进入/刷新场景）
 watch(
   () => route.path,
-  () => tagsViewStore.addView(route),
+  () => {
+    tabsStore.updateTabFromRoute(route)
+  },
   { immediate: true },
 )
 
-const go = (tag: TagView) => {
-  if (tag.path !== route.path) router.push(tag.path)
+// 标签页点击事件
+function handleTabClick(tab: TabItem) {
+  const path = tab.path
+  tabsStore.setActiveTab(path)
+  router.push(path)
 }
 
-// 被关的页签必然不是当前页（当前页没有关闭入口），无需处理导航
-const closeTag = (tag: TagView) => {
-  tagsViewStore.delView(tag.path)
+// 右键菜单事件
+function handleContextMenu(e: MouseEvent, tab: TabItem) {
+  contextMenu.value.currentTab = tab
+  contextMenu.value.style = {
+    left: e.clientX + 'px',
+    top: e.clientY + 'px',
+  }
+  contextMenu.value.visible = true
 }
 
-const contextMenu = reactive<{ visible: boolean; left: number; top: number; target: TagView | null }>({
-  visible: false,
-  left: 0,
-  top: 0,
-  target: null,
+// 关闭右键菜单
+function closeContextMenu() {
+  contextMenu.value.visible = false
+}
+
+// 点击外部关闭右键菜单
+onMounted(() => {
+  document.addEventListener('click', closeContextMenu)
 })
 
-const openContextMenu = (e: MouseEvent, tag: TagView) => {
-  contextMenu.target = tag
-  contextMenu.left = e.clientX
-  contextMenu.top = e.clientY
-  contextMenu.visible = true
+onUnmounted(() => {
+  document.removeEventListener('click', closeContextMenu)
+})
+
+// 标签页关闭事件
+function handleTabRemove(path: string) {
+  const result = tabsStore.removeTab(path)
+  // 如果需要导航，由组件层处理路由跳转
+  if (result.shouldNavigate && result.path) {
+    router.push(result.path)
+  }
 }
 
-const closeContextMenu = () => {
-  contextMenu.visible = false
+// 关闭左侧标签页（保留首页和当前页及右侧的标签页）
+function closeLeftTabs(currentPath: string) {
+  const currentIndex = tabs.value.findIndex((tab) => tab.path === currentPath)
+  if (currentIndex <= 0) return
+
+  tabsStore.tabs = tabs.value.filter((tab, index) => {
+    return index >= currentIndex || !tab.closable
+  })
 }
 
-const closeFromMenu = () => {
-  if (contextMenu.target && contextMenu.target.path !== route.path) {
-    tagsViewStore.delView(contextMenu.target.path)
+// 关闭右侧标签页（保留首页和当前页及左侧的标签页）
+function closeRightTabs(currentPath: string) {
+  const currentIndex = tabs.value.findIndex((tab) => tab.path === currentPath)
+  if (currentIndex >= tabs.value.length - 1) return
+
+  tabsStore.tabs = tabs.value.filter((tab, index) => {
+    return index <= currentIndex || !tab.closable
+  })
+}
+
+// 右键菜单命令处理
+function handleCommand(command: string) {
+  const currentPath = contextMenu.value.currentTab?.path || activeTab.value
+
+  switch (command) {
+    case 'refresh':
+      // 刷新当前页（重新加载组件）
+      tabsStore.refreshTab()
+      break
+    case 'closeOther':
+      if (tabs.value.length > 1) {
+        tabsStore.closeOtherTabs(currentPath)
+      }
+      break
+    case 'closeAll':
+      if (tabs.value.length > 1) {
+        const result = tabsStore.closeAllTabs()
+        if (result.shouldNavigate && result.path) {
+          router.push(result.path)
+        }
+      }
+      break
+    case 'closeLeft':
+      closeLeftTabs(currentPath)
+      break
+    case 'closeRight':
+      closeRightTabs(currentPath)
+      break
   }
   closeContextMenu()
 }
-
-// "关闭其他"以右键目标为保留对象；目标不是当前页时顺带跳过去
-const closeOthersFromMenu = () => {
-  if (contextMenu.target && tagsViewStore.visitedViews.length > 1) {
-    tagsViewStore.delOthersViews(contextMenu.target.path)
-    if (contextMenu.target.path !== route.path) {
-      router.push(contextMenu.target.path)
-    }
-  }
-  closeContextMenu()
-}
-
-onMounted(() => document.addEventListener('click', closeContextMenu))
-onUnmounted(() => document.removeEventListener('click', closeContextMenu))
 </script>
