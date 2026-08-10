@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -7,7 +7,9 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, import.meta.dirname)
+  return {
   plugins: [
     vue(),
     AutoImport({
@@ -33,12 +35,14 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        // 后端地址由环境变量驱动（.env.development / .env.production）
+        target: env.VITE_APP_BASE_API,
         changeOrigin: true,
         // 后端无前缀路由（/auth/**、/system/**），必须剥掉 /api 前缀——
-        // 否则 8080/api/auth/captcha 直接 404（与 Jarvis-web 一致）
+        // 否则 8080/api/auth/captcha 直接 404
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
+  }
 })

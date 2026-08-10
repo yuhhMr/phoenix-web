@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 占位标题，运行时由站点配置（src/config/app.ts）下发 -->
-    <title>phoenix</title>
+    <!-- 占位标题，vite 构建期由 %VITE_APP_TITLE%（.env 系列文件）注入 -->
+    <title>%VITE_APP_TITLE%</title>
   </head>
   <body>
     <div id="app"></div>
