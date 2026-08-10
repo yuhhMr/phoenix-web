@@ -31,9 +31,9 @@
       >
         <IconClose class="size-3.5" />
       </button>
-      <!-- 密码可视化切换：仅 type=password 时渲染 -->
+      <!-- 密码可视化切换：仅密码框且有输入时出现（避免与浏览器原生 reveal 重复） -->
       <button
-        v-if="isPassword"
+        v-if="showPasswordToggle"
         type="button"
         tabindex="-1"
         class="rounded p-1 transition-colors"
@@ -102,15 +102,18 @@ const passwordVisible = ref(false)
 const isPassword = computed(() => props.type === 'password')
 const actualType = computed(() => (isPassword.value && passwordVisible.value ? 'text' : props.type))
 const showClear = computed(() => props.clearable && !props.disabled && props.modelValue.length > 0)
+/** 密码可视切换与清空按钮同节奏：有输入才出现（浏览器原生 reveal 已在样式中屏蔽） */
+const showPasswordToggle = computed(() => isPassword.value && !props.disabled && props.modelValue.length > 0)
 
 const sizeClass = computed(() => (props.size === 'lg' ? 'h-11 text-[15px]' : 'h-10 text-sm'))
 
 const variantClass = computed(() => {
   if (props.variant === 'glass') {
+    // 原型是白底深字（设计/登录页.jpg），不是透明白字
     return [
-      'bg-white/10 text-white placeholder:text-white/55',
-      props.error ? 'border-red-400/80' : 'border-white/30',
-      'focus:bg-white/20 focus:border-blue-400/70',
+      'bg-white/90 text-slate-800 placeholder:text-slate-400',
+      props.error ? 'border-red-400/80' : 'border-white/40',
+      'focus:bg-white focus:border-primary',
       'disabled:opacity-50',
     ]
   }
@@ -126,14 +129,14 @@ const variantClass = computed(() => {
 const slots = useSlots()
 const paddingClass = computed(() => {
   const pl = slots.prefix ? 'pl-9' : 'pl-3'
-  const rightCount = (showClear.value ? 1 : 0) + (isPassword.value ? 1 : 0)
+  const rightCount = (showClear.value ? 1 : 0) + (showPasswordToggle.value ? 1 : 0)
   const pr = rightCount === 0 ? 'pr-3' : rightCount === 1 ? 'pr-9' : 'pr-14'
   return `${pl} ${pr}`
 })
 
-const iconColor = computed(() => (props.variant === 'glass' ? 'text-white/75' : 'text-text-secondary'))
+const iconColor = computed(() => (props.variant === 'glass' ? 'text-slate-400' : 'text-text-secondary'))
 const suffixBtnClass = computed(() =>
-  props.variant === 'glass' ? 'text-white/70 hover:bg-white/15 hover:text-white' : 'text-text-secondary hover:bg-slate-100 hover:text-text',
+  props.variant === 'glass' ? 'text-slate-400 hover:bg-slate-200/70 hover:text-slate-600' : 'text-text-secondary hover:bg-slate-100 hover:text-text',
 )
 
 const onInput = (e: Event) => {
@@ -145,3 +148,11 @@ const onClear = () => {
   emit('clear')
 }
 </script>
+
+<style scoped>
+/* 屏蔽浏览器（Edge/IE 系）密码框自带的 reveal/clear 按钮，避免与组件按钮重复 */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+</style>
