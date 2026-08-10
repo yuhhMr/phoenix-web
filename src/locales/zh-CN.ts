@@ -4,6 +4,8 @@ export default {
     username: '用户名',
     password: '密码',
     captcha: '验证码',
+    captchaRefresh: '点击刷新验证码',
+    rememberMe: '记住我',
     submit: '登录',
     loading: '登录中...',
   },

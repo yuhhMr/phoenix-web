@@ -6,7 +6,9 @@ export interface RoleItem {
   roleName: string
   roleCode: string
   dataScope: number
+  sort?: number
   status: string
+  remark?: string
   createdAt: string
 }
 

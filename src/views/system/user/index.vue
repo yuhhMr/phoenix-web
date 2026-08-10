@@ -156,7 +156,7 @@ const loading = ref(false)
 const modalVisible = ref(false)
 const saving = ref(false)
 const isEdit = ref(false)
-const form = reactive<Partial<UserItem> & { password?: string }>({
+const form = reactive<Partial<UserItem> & { password: string }>({
   userId: undefined,
   username: '',
   password: '',

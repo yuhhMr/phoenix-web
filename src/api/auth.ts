@@ -5,15 +5,19 @@ export interface CaptchaRes {
   img: string
 }
 
+/** 与后端 LoginRequest 对齐：captchaCode/captchaUuid 不可改名（契约冻结，docs/api/openapi-m2-frozen.json） */
 export interface LoginReq {
   username: string
   password: string
-  code: string
-  uuid: string
+  captchaCode: string
+  captchaUuid: string
+  deviceId: string
 }
 
 export interface LoginRes {
   token: string
+  tokenType: string
+  expiresIn: number
 }
 
 export interface LoginInfoRes {

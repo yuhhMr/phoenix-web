@@ -5,6 +5,7 @@ export interface OrgTreeItem {
   parentId: number
   orgName: string
   orgCode: string
+  sort?: number
   orgPath?: string
   level: number
   status: string

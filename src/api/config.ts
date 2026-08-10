@@ -8,6 +8,7 @@ export interface ConfigItem {
   configValue: string
   valueType: string
   isSystem: number
+  remark?: string
   createdAt: string
 }
 

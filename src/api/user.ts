@@ -8,6 +8,7 @@ export interface UserItem {
   email?: string
   phone?: string
   status: string
+  remark?: string
   orgId?: number
   createdAt: string
 }

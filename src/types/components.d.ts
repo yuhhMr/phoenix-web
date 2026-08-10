@@ -14,6 +14,13 @@ declare module 'vue' {
     AppModal: typeof import('./../components/AppModal.vue')['default']
     DataTable: typeof import('./../components/DataTable.vue')['default']
     HelloWorld: typeof import('./../components/HelloWorld.vue')['default']
+    IconLucideChevronDown: typeof import('~icons/lucide/chevron-down')['default']
+    IconLucideChevronRight: typeof import('~icons/lucide/chevron-right')['default']
+    IconLucideLayoutDashboard: typeof import('~icons/lucide/layout-dashboard')['default']
+    IconLucidePanelLeftClose: typeof import('~icons/lucide/panel-left-close')['default']
+    IconLucidePanelLeftOpen: typeof import('~icons/lucide/panel-left-open')['default']
+    IconLucideSettings: typeof import('~icons/lucide/settings')['default']
+    IconLucideX: typeof import('~icons/lucide/x')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
