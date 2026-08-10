@@ -85,8 +85,8 @@ export function setupGuards(router: Router) {
 
   // 后置守卫
   router.afterEach((to) => {
-    // 站点标题统一由配置下发，页面标题拼在前面
-    document.title = to.meta.title ? `${to.meta.title} - ${APP_TITLE}` : APP_TITLE
+    // 浏览器标签页标题固定为站点名（src/config/app.ts 下发），不随路由变化
+    document.title = APP_TITLE
 
     // 添加标签页（排除登录页等不需要标签页的路由）；
     // 另支持 meta.noTagsView 约定（404 等路由显式声明不进页签）
