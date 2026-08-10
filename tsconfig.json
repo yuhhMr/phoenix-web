@@ -1,7 +1,16 @@
+/**
+ * TypeScript 项目根配置（Project References 入口）。
+ *
+ * 本文件解决什么问题：
+ * - 将应用代码（src/）与 Node 侧工具配置（vite.config.ts）拆成两个子项目，
+ *   避免 vite.config.ts 里的 Node 类型污染浏览器端代码；
+ * - `vue-tsc --build` 会读取本文件，依次编译两个子项目。
+ *
+ * 修改注意点：
+ * - 新增子项目（如测试、Node 脚本）时，在 references 中追加；
+ * - 不要在根配置里写 compilerOptions，具体规则放在子项目里。
+ */
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

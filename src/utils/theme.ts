@@ -17,13 +17,4 @@ export function applyThemeMode(theme: string) {
 /**
  * 预设主题色（取色器下方的快捷色板），首位即 tailwind.config.js 的 primary。
  */
-export const PRESET_COLORS = [
-  '#2563eb',
-  '#18a058',
-  '#f59e0b',
-  '#ef4444',
-  '#0ea5e9',
-  '#64748b',
-  '#8b5cf6',
-  '#dc2626',
-]
+export const PRESET_COLORS = ['#2563eb', '#18a058', '#f59e0b', '#ef4444', '#0ea5e9', '#64748b', '#8b5cf6', '#dc2626']

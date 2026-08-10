@@ -15,7 +15,6 @@ declare module 'vue' {
     AppInput: typeof import('./../components/AppInput.vue')['default']
     AppModal: typeof import('./../components/AppModal.vue')['default']
     DataTable: typeof import('./../components/DataTable.vue')['default']
-    HelloWorld: typeof import('./../components/HelloWorld.vue')['default']
     IconLucideChevronDown: typeof import('~icons/lucide/chevron-down')['default']
     IconLucideChevronRight: typeof import('~icons/lucide/chevron-right')['default']
     IconLucideLanguages: typeof import('~icons/lucide/languages')['default']

@@ -85,7 +85,7 @@ const router = createRouter({
             },
             {
               path: 'menu',
-              name: 'Menu',
+              name: 'SystemMenu',
               component: () => import('@/views/system/menu/index.vue'),
               meta: { title: '菜单管理', icon: 'menu', perm: 'system:menu:list' },
             },

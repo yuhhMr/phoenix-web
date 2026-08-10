@@ -8,16 +8,18 @@
         class="px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         @keyup.enter="handleSearch"
       />
-      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">查询</button>
+      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">
+        查询
+      </button>
       <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
     </div>
 
     <DataTable
+      v-model:current="query.pageNum"
       :data="list"
       :columns="columns"
       :loading="loading"
       :total="total"
-      v-model:current="query.pageNum"
       :size="query.pageSize"
     />
   </div>
@@ -41,17 +43,25 @@ const columns = [
   columnHelper.accessor('nickname', { header: '昵称', size: 140 }),
   columnHelper.accessor('loginIp', { header: '登录IP', size: 140 }),
   columnHelper.accessor('loginLocation', { header: '归属地', size: 160 }),
-  columnHelper.accessor('loginTime', { header: '登录时间', size: 180, cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-' }),
+  columnHelper.accessor('loginTime', {
+    header: '登录时间',
+    size: 180,
+    cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-',
+  }),
   columnHelper.display({
     id: 'actions',
     header: '操作',
     size: 120,
     cell: ({ row }) => {
       if (!perm.hasPerm('monitor:online:kick')) return null
-      return h('button', {
-        class: 'text-sm text-red-500 hover:underline',
-        onClick: () => kick(row.original.jti, row.original.username),
-      }, '强退')
+      return h(
+        'button',
+        {
+          class: 'text-sm text-red-500 hover:underline',
+          onClick: () => kick(row.original.jti, row.original.username),
+        },
+        '强退',
+      )
     },
   }),
 ]
@@ -74,8 +84,15 @@ const loadData = async () => {
   }
 }
 
-const handleSearch = () => { query.pageNum = 1; loadData() }
-const resetQuery = () => { query.username = ''; query.pageNum = 1; loadData() }
+const handleSearch = () => {
+  query.pageNum = 1
+  loadData()
+}
+const resetQuery = () => {
+  query.username = ''
+  query.pageNum = 1
+  loadData()
+}
 const kick = async (jti: string, username: string) => {
   if (!confirm(`确认强制下线用户 ${username}？`)) return
   await kickOnlineUser(jti)

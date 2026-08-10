@@ -19,10 +19,7 @@
     <button
       :title="collapsed ? item.title : undefined"
       class="flex items-center gap-3 px-3 py-2 rounded-md text-sm w-full transition-colors"
-      :class="[
-        collapsed ? 'justify-center' : '',
-        isChildActive ? 'text-primary' : 'text-text hover:bg-background',
-      ]"
+      :class="[collapsed ? 'justify-center' : '', isChildActive ? 'text-primary' : 'text-text hover:bg-background']"
       @click="open = !open"
     >
       <component :is="icon" class="w-5 h-5 shrink-0" />
@@ -35,12 +32,7 @@
       </template>
     </button>
     <div v-show="open" class="space-y-1" :class="collapsed ? 'mt-1' : 'mt-1 pl-3'">
-      <TreeMenu
-        v-for="child in item.children"
-        :key="child.path"
-        :item="child"
-        :collapsed="collapsed"
-      />
+      <TreeMenu v-for="child in item.children" :key="child.path" :item="child" :collapsed="collapsed" />
     </div>
   </div>
 </template>
@@ -66,9 +58,7 @@ const route = useRoute()
 const hasChildren = computed(() => !!props.item.children?.length)
 const icon = computed(() => getMenuIcon(props.item.icon))
 const isActive = computed(() => !hasChildren.value && route.path === props.item.path)
-const isChildActive = computed(
-  () => hasChildren.value && route.path.startsWith(props.item.path + '/'),
-)
+const isChildActive = computed(() => hasChildren.value && route.path.startsWith(props.item.path + '/'))
 
 const open = ref(false)
 // 路由变化时若命中本目录的子项则自动展开；用户手动收起不强制回弹（仅单向展开）

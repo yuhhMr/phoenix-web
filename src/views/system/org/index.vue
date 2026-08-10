@@ -27,26 +27,44 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">上级组织</label>
-          <select v-model="form.parentId" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.parentId"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option :value="0">顶层</option>
             <option v-for="item in flatOrgs" :key="item.orgId" :value="item.orgId">{{ item.orgName }}</option>
           </select>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">组织名称</label>
-          <input v-model="form.orgName" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.orgName"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">组织编码</label>
-          <input v-model="form.orgCode" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.orgCode"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">排序</label>
-          <input v-model.number="form.sort" type="number" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model.number="form.sort"
+            type="number"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">状态</label>
-          <select v-model="form.status" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.status"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="0">正常</option>
             <option value="1">停用</option>
           </select>
@@ -89,14 +107,15 @@ const flatOrgs = computed(() => {
   return walk(tree.value, [])
 })
 
-const resetForm = () => Object.assign(form, {
-  orgId: undefined,
-  parentId: 0,
-  orgName: '',
-  orgCode: '',
-  sort: 0,
-  status: '0',
-})
+const resetForm = () =>
+  Object.assign(form, {
+    orgId: undefined,
+    parentId: 0,
+    orgName: '',
+    orgCode: '',
+    sort: 0,
+    status: '0',
+  })
 
 const openCreate = (parentId: number) => {
   isEdit.value = false

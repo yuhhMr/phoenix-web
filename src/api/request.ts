@@ -1,6 +1,8 @@
-import axios from 'axios'
+import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { useUserStore } from '@/store/user'
 import router from '@/router'
+import { errorMessage } from '@/utils/message'
+import { downloadBlob, extractFilename } from '@/utils/download'
 
 /**
  * 统一请求封装。
@@ -35,6 +37,13 @@ const forceReLogin = () => {
   }
 }
 
+/** 业务错误默认 toast 提示；config.silent 为 true 时关闭 */
+function notifyError(err: unknown, config?: AxiosRequestConfig) {
+  if ((config as { silent?: boolean } | undefined)?.silent) return
+  const msg = err instanceof Error ? err.message : '请求失败'
+  errorMessage(msg)
+}
+
 request.interceptors.response.use(
   (res) => {
     // 滑动续期：后端在响应头回发的新 JWT，静默替换
@@ -49,7 +58,9 @@ request.interceptors.response.use(
       return Promise.reject(new Error(data.msg || '登录已失效'))
     }
     if (data.code !== 200) {
-      return Promise.reject(new Error(data.msg || '请求失败'))
+      const error = new Error(data.msg || '请求失败')
+      notifyError(error, res.config)
+      return Promise.reject(error)
     }
     return data.data
   },
@@ -57,8 +68,49 @@ request.interceptors.response.use(
     if (err.response?.status === 401) {
       forceReLogin()
     }
+    notifyError(err, err.config)
     return Promise.reject(err)
   },
 )
+
+/**
+ * 文件导出 / 下载。
+ * @param url - 后端导出地址
+ * @param params - 查询参数
+ * @param filename - 默认文件名（后端返回 Content-Disposition 时优先使用后端名称）
+ */
+export async function download(url: string, params?: Record<string, unknown>, filename = 'download'): Promise<void> {
+  const res: AxiosResponse<Blob> = await request.get(url, {
+    params,
+    responseType: 'blob',
+  })
+  const finalName = extractFilename(res.headers['content-disposition'], filename)
+  downloadBlob(res.data, finalName)
+}
+
+/**
+ * 文件上传（multipart/form-data）。
+ * @param url - 上传地址
+ * @param file - 文件对象
+ * @param fieldName - 表单字段名，默认 file
+ * @param onProgress - 上传进度回调
+ */
+export function upload<T = unknown>(
+  url: string,
+  file: File,
+  fieldName = 'file',
+  onProgress?: (percent: number) => void,
+): Promise<T> {
+  const formData = new FormData()
+  formData.append(fieldName, file)
+  return request.post(url, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (event) => {
+      if (event.total && onProgress) {
+        onProgress(Math.round((event.loaded * 100) / event.total))
+      }
+    },
+  }) as Promise<T>
+}
 
 export default request

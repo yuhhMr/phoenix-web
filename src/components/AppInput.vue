@@ -81,6 +81,9 @@ const props = withDefaults(
   }>(),
   {
     type: 'text',
+    placeholder: undefined,
+    maxlength: undefined,
+    autocomplete: undefined,
     clearable: true,
     disabled: false,
     error: false,
@@ -136,7 +139,9 @@ const paddingClass = computed(() => {
 
 const iconColor = computed(() => (props.variant === 'glass' ? 'text-slate-400' : 'text-text-secondary'))
 const suffixBtnClass = computed(() =>
-  props.variant === 'glass' ? 'text-slate-400 hover:bg-slate-200/70 hover:text-slate-600' : 'text-text-secondary hover:bg-slate-100 hover:text-text',
+  props.variant === 'glass'
+    ? 'text-slate-400 hover:bg-slate-200/70 hover:text-slate-600'
+    : 'text-text-secondary hover:bg-slate-100 hover:text-text',
 )
 
 const onInput = (e: Event) => {

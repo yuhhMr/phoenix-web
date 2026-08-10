@@ -1,8 +1,38 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    // 统一使用项目自带的 TypeScript 语言服务，避免 VSCode 内置版本与 vue-tsc 不一致
+    "typescript.tsdk": "node_modules/typescript/lib",
+    // 保存时自动格式化，配合项目 Prettier 配置
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // 对 Vue 文件使用 Volar（官方 Vue 语言支持）
+    "[vue]": {
+      "editor.defaultFormatter": "Vue.volar"
+    },
+    // Tailwind CSS 智能提示
+    "tailwindCSS.includeLanguages": {
+      "vue": "html"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      // Vue 官方语言支持（Volar 已取代 Vetur）
+      "Vue.volar",
+      // TypeScript 类型检查
+      "ms-vscode.vscode-typescript-next",
+      // 代码格式化
+      "esbenp.prettier-vscode",
+      // ESLint 实时报错
+      "dbaeumer.vscode-eslint",
+      // Tailwind CSS 类名智能提示
+      "bradlc.vscode-tailwindcss",
+      // Iconify 图标预览
+      "antfu.iconify"
+    ]
+  }
 }

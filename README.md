@@ -6,17 +6,17 @@ phoenix-fast 管理端前端（后端仓库：[phoenix-fast](https://github.com/
 
 ## 技术栈
 
-| 分类 | 选型 |
-|------|------|
-| 框架 | Vue 3（Composition API + `<script setup>`） |
-| 语言 | TypeScript（vue-tsc 严格模式） |
-| 构建 | Vite 8 |
-| 组件逻辑层 | ark-ui（Dialog/Select 等交互组件）+ 自研样式壳（AppInput/AppButton/AppModal/DataTable） |
-| 样式 | Tailwind CSS 3 |
-| 表格 | TanStack Table（Vue） |
-| 路由 / 状态 | Vue Router 4 / Pinia（persistedstate 持久化） |
-| 请求 | axios（统一封装：token 注入、body code 判定、401 回收、滑动续期） |
-| 国际化 | vue-i18n（zh-CN） |
+| 分类        | 选型                                                                                    |
+| ----------- | --------------------------------------------------------------------------------------- |
+| 框架        | Vue 3（Composition API + `<script setup>`）                                             |
+| 语言        | TypeScript（vue-tsc 严格模式）                                                          |
+| 构建        | Vite 8                                                                                  |
+| 组件逻辑层  | ark-ui（Dialog/Select 等交互组件）+ 自研样式壳（AppInput/AppButton/AppModal/DataTable） |
+| 样式        | Tailwind CSS 3                                                                          |
+| 表格        | TanStack Table（Vue）                                                                   |
+| 路由 / 状态 | Vue Router 4 / Pinia（persistedstate 持久化）                                           |
+| 请求        | axios（统一封装：token 注入、body code 判定、401 回收、滑动续期）                       |
+| 国际化      | vue-i18n（zh-CN）                                                                       |
 
 ## 环境要求
 
@@ -27,28 +27,41 @@ phoenix-fast 管理端前端（后端仓库：[phoenix-fast](https://github.com/
 ## 项目启动
 
 ```sh
-# 安装依赖
+# 1. 安装依赖（含 Vite 等开发依赖）
 npm install
 
-# 开发（热更新，默认 5173 端口，/api 代理到后端）
+# 2. 开发（热更新，默认 5173 端口，/api 代理到后端）
 npm run dev
 
-# 类型检查 + 生产构建
+# 3. 类型检查 + 生产构建
 npm run build
 
-# 预览构建产物
+# 4. 预览构建产物
 npm run preview
 ```
+
+### 常用脚本说明
+
+| 脚本                 | 说明                                                                              |
+| -------------------- | --------------------------------------------------------------------------------- |
+| `npm run dev`        | 启动 Vite 开发服务器，监听 5173，代理 `/api` 到 `.env.development` 配置的后端地址 |
+| `npm run build`      | 先执行 `vue-tsc -b` 类型检查，再通过 Vite 打包到 `dist/`                          |
+| `npm run preview`    | 本地预览 `dist/` 产物，用于生产构建前的快速验证                                   |
+| `npm run type-check` | 单独跑 TypeScript 类型检查（不生成产物）                                          |
+| `npm run lint`       | 执行 ESLint 检查                                                                  |
+| `npm run lint:fix`   | 自动修复可修复的 ESLint 问题                                                      |
+| `npm run format`     | 使用 Prettier 格式化全部源码                                                      |
+| `npm run prepare`    | 初始化 Husky 钩子（安装依赖后自动执行）                                           |
 
 ## 环境变量
 
 配置文件全部入库（前端无密钥——RSA 公钥由后端 `/auth/public-key` 动态下发）：
 
-| 文件 | 用途 |
-|------|------|
-| `.env` | 共享配置（`VITE_APP_TITLE` 站点标题） |
+| 文件               | 用途                                                       |
+| ------------------ | ---------------------------------------------------------- |
+| `.env`             | 共享配置（`VITE_APP_TITLE` 站点标题）                      |
 | `.env.development` | 开发环境（`VITE_APP_BASE_API` 后端地址，vite 代理 target） |
-| `.env.production` | 生产环境（同源部署，`VITE_APP_BASE_API=/`） |
+| `.env.production`  | 生产环境（同源部署，`VITE_APP_BASE_API=/`）                |
 
 ## 目录结构
 

@@ -15,17 +15,25 @@
         class="px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         @keyup.enter="handleSearch"
       />
-      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">查询</button>
+      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">
+        查询
+      </button>
       <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
-      <button v-perm="'system:config:create'" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto" @click="openCreate">新增</button>
+      <button
+        v-perm="'system:config:create'"
+        class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto"
+        @click="openCreate"
+      >
+        新增
+      </button>
     </div>
 
     <DataTable
+      v-model:current="query.pageNum"
       :data="list"
       :columns="columns"
       :loading="loading"
       :total="total"
-      v-model:current="query.pageNum"
       :size="query.pageSize"
     />
 
@@ -33,19 +41,34 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">参数名称</label>
-          <input v-model="form.configName" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.configName"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">参数键</label>
-          <input v-model="form.configKey" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.configKey"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">参数值</label>
-          <input v-model="form.configValue" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.configValue"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">值类型</label>
-          <select v-model="form.valueType" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.valueType"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="STRING">STRING</option>
             <option value="INT">INT</option>
             <option value="BOOL">BOOL</option>
@@ -54,7 +77,11 @@
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">备注</label>
-          <textarea v-model="form.remark" rows="2" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+          <textarea
+            v-model="form.remark"
+            rows="2"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          ></textarea>
         </div>
       </div>
     </AppModal>
@@ -80,7 +107,11 @@ const columns = [
   columnHelper.accessor('configKey', { header: '参数键', size: 200 }),
   columnHelper.accessor('configValue', { header: '参数值', size: 200 }),
   columnHelper.accessor('valueType', { header: '值类型', size: 100 }),
-  columnHelper.accessor('createdAt', { header: '创建时间', size: 180, cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-' }),
+  columnHelper.accessor('createdAt', {
+    header: '创建时间',
+    size: 180,
+    cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-',
+  }),
   columnHelper.display({
     id: 'actions',
     header: '操作',
@@ -88,10 +119,18 @@ const columns = [
     cell: ({ row }) => {
       const btns = []
       if (perm.hasPerm('system:config:update')) {
-        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+        btns.push(
+          h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
+        )
       }
       if (perm.hasPerm('system:config:delete')) {
-        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.configId) }, '删除'))
+        btns.push(
+          h(
+            'button',
+            { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.configId) },
+            '删除',
+          ),
+        )
       }
       return h('div', { class: 'flex gap-3' }, btns)
     },
@@ -106,11 +145,35 @@ const loading = ref(false)
 const modalVisible = ref(false)
 const saving = ref(false)
 const isEdit = ref(false)
-const form = reactive<Partial<ConfigItem>>({ configId: undefined, configName: '', configKey: '', configValue: '', valueType: 'STRING', remark: '' })
+const form = reactive<Partial<ConfigItem>>({
+  configId: undefined,
+  configName: '',
+  configKey: '',
+  configValue: '',
+  valueType: 'STRING',
+  remark: '',
+})
 
-const resetForm = () => Object.assign(form, { configId: undefined, configName: '', configKey: '', configValue: '', valueType: 'STRING', remark: '' })
-const openCreate = () => { isEdit.value = false; resetForm(); modalVisible.value = true }
-const openEdit = (row: ConfigItem) => { isEdit.value = true; resetForm(); Object.assign(form, row); modalVisible.value = true }
+const resetForm = () =>
+  Object.assign(form, {
+    configId: undefined,
+    configName: '',
+    configKey: '',
+    configValue: '',
+    valueType: 'STRING',
+    remark: '',
+  })
+const openCreate = () => {
+  isEdit.value = false
+  resetForm()
+  modalVisible.value = true
+}
+const openEdit = (row: ConfigItem) => {
+  isEdit.value = true
+  resetForm()
+  Object.assign(form, row)
+  modalVisible.value = true
+}
 
 const save = async () => {
   saving.value = true
@@ -139,9 +202,21 @@ const loadData = async () => {
   }
 }
 
-const handleSearch = () => { query.pageNum = 1; loadData() }
-const resetQuery = () => { query.configName = ''; query.configKey = ''; query.pageNum = 1; loadData() }
-const remove = async (id: number) => { if (!confirm('确认删除？')) return; await deleteConfig(id); loadData() }
+const handleSearch = () => {
+  query.pageNum = 1
+  loadData()
+}
+const resetQuery = () => {
+  query.configName = ''
+  query.configKey = ''
+  query.pageNum = 1
+  loadData()
+}
+const remove = async (id: number) => {
+  if (!confirm('确认删除？')) return
+  await deleteConfig(id)
+  loadData()
+}
 
 watch(() => query.pageNum, loadData, { immediate: true })
 </script>

@@ -33,9 +33,7 @@
                   :key="opt.value"
                   class="flex items-center gap-1 px-3 py-1.5 text-sm transition-colors"
                   :class="
-                    settings.theme === opt.value
-                      ? 'bg-primary text-white'
-                      : 'text-text-secondary hover:bg-background'
+                    settings.theme === opt.value ? 'bg-primary text-white' : 'text-text-secondary hover:bg-background'
                   "
                   @click="handleThemeChange(opt.value)"
                 >

@@ -1,7 +1,5 @@
 <template>
-  <div v-if="!link" class="flex items-center justify-center h-full text-2xl text-text-secondary">
-    404
-  </div>
+  <div v-if="!link" class="flex items-center justify-center h-full text-2xl text-text-secondary">404</div>
   <div v-else class="w-full h-full">
     <iframe :src="link" frameborder="no" scrolling="auto" class="w-full h-full"></iframe>
   </div>

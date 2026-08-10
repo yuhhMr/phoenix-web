@@ -16,17 +16,25 @@
         <option value="0">正常</option>
         <option value="1">停用</option>
       </select>
-      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">查询</button>
+      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">
+        查询
+      </button>
       <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
-      <button v-perm="'system:dict:create'" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto" @click="openCreate">新增</button>
+      <button
+        v-perm="'system:dict:create'"
+        class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto"
+        @click="openCreate"
+      >
+        新增
+      </button>
     </div>
 
     <DataTable
+      v-model:current="query.pageNum"
       :data="list"
       :columns="columns"
       :loading="loading"
       :total="total"
-      v-model:current="query.pageNum"
       :size="query.pageSize"
     />
 
@@ -34,15 +42,26 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">字典名称</label>
-          <input v-model="form.dictName" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.dictName"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">字典类型</label>
-          <input v-model="form.dictType" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.dictType"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">状态</label>
-          <select v-model="form.status" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.status"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="0">正常</option>
             <option value="1">停用</option>
           </select>
@@ -69,8 +88,16 @@ const perm = usePermissionStore()
 const columns = [
   columnHelper.accessor('dictName', { header: '字典名称', size: 180 }),
   columnHelper.accessor('dictType', { header: '字典类型', size: 180 }),
-  columnHelper.accessor('status', { header: '状态', size: 100, cell: (info) => (info.getValue() === '0' ? '正常' : '停用') }),
-  columnHelper.accessor('createdAt', { header: '创建时间', size: 180, cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-' }),
+  columnHelper.accessor('status', {
+    header: '状态',
+    size: 100,
+    cell: (info) => (info.getValue() === '0' ? '正常' : '停用'),
+  }),
+  columnHelper.accessor('createdAt', {
+    header: '创建时间',
+    size: 180,
+    cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-',
+  }),
   columnHelper.display({
     id: 'actions',
     header: '操作',
@@ -78,10 +105,18 @@ const columns = [
     cell: ({ row }) => {
       const btns = []
       if (perm.hasPerm('system:dict:update')) {
-        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+        btns.push(
+          h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
+        )
       }
       if (perm.hasPerm('system:dict:delete')) {
-        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.dictTypeId) }, '删除'))
+        btns.push(
+          h(
+            'button',
+            { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.dictTypeId) },
+            '删除',
+          ),
+        )
       }
       return h('div', { class: 'flex gap-3' }, btns)
     },
@@ -99,8 +134,17 @@ const isEdit = ref(false)
 const form = reactive<Partial<DictTypeItem>>({ dictTypeId: undefined, dictName: '', dictType: '', status: '0' })
 
 const resetForm = () => Object.assign(form, { dictTypeId: undefined, dictName: '', dictType: '', status: '0' })
-const openCreate = () => { isEdit.value = false; resetForm(); modalVisible.value = true }
-const openEdit = (row: DictTypeItem) => { isEdit.value = true; resetForm(); Object.assign(form, row); modalVisible.value = true }
+const openCreate = () => {
+  isEdit.value = false
+  resetForm()
+  modalVisible.value = true
+}
+const openEdit = (row: DictTypeItem) => {
+  isEdit.value = true
+  resetForm()
+  Object.assign(form, row)
+  modalVisible.value = true
+}
 
 const save = async () => {
   saving.value = true
@@ -129,9 +173,21 @@ const loadData = async () => {
   }
 }
 
-const handleSearch = () => { query.pageNum = 1; loadData() }
-const resetQuery = () => { query.dictName = ''; query.status = ''; query.pageNum = 1; loadData() }
-const remove = async (id: number) => { if (!confirm('确认删除？')) return; await deleteDictType(id); loadData() }
+const handleSearch = () => {
+  query.pageNum = 1
+  loadData()
+}
+const resetQuery = () => {
+  query.dictName = ''
+  query.status = ''
+  query.pageNum = 1
+  loadData()
+}
+const remove = async (id: number) => {
+  if (!confirm('确认删除？')) return
+  await deleteDictType(id)
+  loadData()
+}
 
 watch(() => query.pageNum, loadData, { immediate: true })
 </script>

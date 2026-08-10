@@ -28,11 +28,9 @@ export interface NoticeQuery {
 export const fetchNoticePage = (params: NoticeQuery): Promise<PageRes<NoticeItem>> =>
   request.get('/system/notice/page', { params })
 
-export const createNotice = (data: Partial<NoticeItem>): Promise<number> =>
-  request.post('/system/notice', data)
+export const createNotice = (data: Partial<NoticeItem>): Promise<number> => request.post('/system/notice', data)
 
-export const updateNotice = (data: Partial<NoticeItem>): Promise<void> =>
-  request.put('/system/notice', data)
+export const updateNotice = (data: Partial<NoticeItem>): Promise<void> => request.put('/system/notice', data)
 
 export const deleteNotice = (id: number): Promise<void> => request.delete(`/system/notice/${id}`)
 

@@ -24,16 +24,18 @@
         <option value="0">成功</option>
         <option value="1">失败</option>
       </select>
-      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">查询</button>
+      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">
+        查询
+      </button>
       <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
     </div>
 
     <DataTable
+      v-model:current="query.pageNum"
       :data="list"
       :columns="columns"
       :loading="loading"
       :total="total"
-      v-model:current="query.pageNum"
       :size="query.pageSize"
     />
   </div>
@@ -57,9 +59,17 @@ const columns = [
   columnHelper.accessor('requestMethod', { header: '方法', size: 80 }),
   columnHelper.accessor('requestUrl', { header: 'URL', size: 200 }),
   columnHelper.accessor('ip', { header: 'IP', size: 130 }),
-  columnHelper.accessor('status', { header: '状态', size: 80, cell: (info) => (info.getValue() === '0' ? '成功' : '失败') }),
+  columnHelper.accessor('status', {
+    header: '状态',
+    size: 80,
+    cell: (info) => (info.getValue() === '0' ? '成功' : '失败'),
+  }),
   columnHelper.accessor('costMs', { header: '耗时(ms)', size: 100 }),
-  columnHelper.accessor('createdAt', { header: '时间', size: 170, cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-' }),
+  columnHelper.accessor('createdAt', {
+    header: '时间',
+    size: 170,
+    cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-',
+  }),
 ]
 
 const query = reactive({ pageNum: 1, pageSize: 10, logType: '', username: '', status: '', startTime: '', endTime: '' })
@@ -80,8 +90,17 @@ const loadData = async () => {
   }
 }
 
-const handleSearch = () => { query.pageNum = 1; loadData() }
-const resetQuery = () => { query.logType = ''; query.username = ''; query.status = ''; query.pageNum = 1; loadData() }
+const handleSearch = () => {
+  query.pageNum = 1
+  loadData()
+}
+const resetQuery = () => {
+  query.logType = ''
+  query.username = ''
+  query.status = ''
+  query.pageNum = 1
+  loadData()
+}
 
 watch(() => query.pageNum, loadData, { immediate: true })
 </script>

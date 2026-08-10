@@ -1,3 +1,18 @@
+/**
+ * TypeScript 应用端配置（浏览器代码：src/ 下的 .ts / .vue）。
+ *
+ * 本文件解决什么问题：
+ * - 继承 Vue 官方 DOM 推荐配置，保证 Vue SFC 类型正确；
+ * - 配置 `@/*` 路径别名，与 vite.config.ts 的 resolve.alias 保持一致；
+ * - 注入 vite/client 和 unplugin-icons 的类型声明；
+ * - 开启 noUnusedLocals / noUnusedParameters 等严格检查，
+ *   在构建期提前发现未使用变量和参数。
+ *
+ * 修改注意点：
+ * - 新增全局类型声明（如 .d.ts）时，放入 src/types/ 并在 include 中覆盖；
+ * - 引入新库的类型包时，在 types 数组中追加；
+ * - 不要在这里开启 `noEmit: false`，Vue 项目走 Vite 编译，tsconfig 只做类型检查。
+ */
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {

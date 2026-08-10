@@ -1,0 +1,16 @@
+# EditorConfig 用于统一不同编辑器/IDE 的基本代码风格。
+# 更多规则见 https://editorconfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+# Markdown 文件保留行尾空格（用于换行）
+trim_trailing_whitespace = false

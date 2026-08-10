@@ -15,20 +15,12 @@
       </thead>
       <tbody class="divide-y divide-border">
         <tr v-if="loading">
-          <td :colspan="table.getAllColumns().length" class="px-4 py-8 text-center text-text-secondary">
-            加载中...
-          </td>
+          <td :colspan="table.getAllColumns().length" class="px-4 py-8 text-center text-text-secondary">加载中...</td>
         </tr>
         <tr v-else-if="data.length === 0">
-          <td :colspan="table.getAllColumns().length" class="px-4 py-8 text-center text-text-secondary">
-            暂无数据
-          </td>
+          <td :colspan="table.getAllColumns().length" class="px-4 py-8 text-center text-text-secondary">暂无数据</td>
         </tr>
-        <tr
-          v-for="row in table.getRowModel().rows"
-          :key="row.id"
-          class="hover:bg-background/50"
-        >
+        <tr v-for="row in table.getRowModel().rows" :key="row.id" class="hover:bg-background/50">
           <td v-for="cell in row.getVisibleCells()" :key="cell.id" class="px-4 py-3">
             <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
           </td>
@@ -38,9 +30,7 @@
 
     <!-- 分页 -->
     <div class="flex items-center justify-between px-4 py-3 border-t border-border">
-      <span class="text-sm text-text-secondary">
-        共 {{ total }} 条，第 {{ current }} / {{ pageCount }} 页
-      </span>
+      <span class="text-sm text-text-secondary"> 共 {{ total }} 条，第 {{ current }} / {{ pageCount }} 页 </span>
       <div class="flex items-center gap-2">
         <button
           class="px-3 py-1 border border-border rounded-md hover:bg-background disabled:opacity-50"
@@ -63,12 +53,7 @@
 
 <script setup lang="ts" generic="T extends object">
 import { computed } from 'vue'
-import {
-  useVueTable,
-  getCoreRowModel,
-  FlexRender,
-  type ColumnDef,
-} from '@tanstack/vue-table'
+import { useVueTable, getCoreRowModel, FlexRender, type ColumnDef } from '@tanstack/vue-table'
 
 const props = defineProps<{
   data: T[]

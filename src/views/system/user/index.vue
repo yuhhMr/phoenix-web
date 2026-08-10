@@ -24,18 +24,10 @@
         <option value="0">正常</option>
         <option value="1">停用</option>
       </select>
-      <button
-        class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
-        @click="handleSearch"
-      >
+      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">
         查询
       </button>
-      <button
-        class="px-4 py-2 border border-border rounded-md hover:bg-background"
-        @click="resetQuery"
-      >
-        重置
-      </button>
+      <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
       <button
         v-perm="'system:user:create'"
         class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto"
@@ -47,11 +39,11 @@
 
     <!-- 表格 -->
     <DataTable
+      v-model:current="query.current"
       :data="list"
       :columns="columns"
       :loading="loading"
       :total="total"
-      v-model:current="query.current"
       :size="query.size"
     />
 
@@ -60,34 +52,63 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">用户名</label>
-          <input v-model="form.username" :disabled="isEdit" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.username"
+            :disabled="isEdit"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div v-if="!isEdit">
           <label class="block text-sm font-medium mb-1">初始密码</label>
-          <input v-model="form.password" type="password" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.password"
+            type="password"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">昵称</label>
-          <input v-model="form.nickname" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.nickname"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">邮箱</label>
-          <input v-model="form.email" type="email" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.email"
+            type="email"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">手机号</label>
-          <input v-model="form.phone" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.phone"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">状态</label>
-          <select v-model="form.status" :disabled="isEdit" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.status"
+            :disabled="isEdit"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="0">正常</option>
             <option value="1">停用</option>
           </select>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">备注</label>
-          <textarea v-model="form.remark" rows="2" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+          <textarea
+            v-model="form.remark"
+            rows="2"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          ></textarea>
         </div>
       </div>
     </AppModal>
@@ -130,13 +151,27 @@ const columns = [
     cell: ({ row }) => {
       const btns = []
       if (perm.hasPerm('system:user:update')) {
-        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+        btns.push(
+          h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
+        )
       }
       if (perm.hasPerm('system:user:update')) {
-        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => toggleStatus(row.original) }, row.original.status === '0' ? '停用' : '启用'))
+        btns.push(
+          h(
+            'button',
+            { class: 'text-sm text-primary hover:underline', onClick: () => toggleStatus(row.original) },
+            row.original.status === '0' ? '停用' : '启用',
+          ),
+        )
       }
       if (perm.hasPerm('system:user:delete')) {
-        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.userId) }, '删除'))
+        btns.push(
+          h(
+            'button',
+            { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.userId) },
+            '删除',
+          ),
+        )
       }
       return h('div', { class: 'flex gap-3' }, btns)
     },
@@ -197,9 +232,23 @@ const save = async () => {
   saving.value = true
   try {
     if (isEdit.value && form.userId) {
-      await updateUser({ userId: form.userId, nickname: form.nickname, email: form.email, phone: form.phone, remark: form.remark })
+      await updateUser({
+        userId: form.userId,
+        nickname: form.nickname,
+        email: form.email,
+        phone: form.phone,
+        remark: form.remark,
+      })
     } else {
-      await createUser({ username: form.username, password: form.password, nickname: form.nickname, email: form.email, phone: form.phone, status: form.status, remark: form.remark })
+      await createUser({
+        username: form.username,
+        password: form.password,
+        nickname: form.nickname,
+        email: form.email,
+        phone: form.phone,
+        status: form.status,
+        remark: form.remark,
+      })
     }
     modalVisible.value = false
     loadData()

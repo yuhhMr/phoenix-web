@@ -10,9 +10,4 @@ import './style.css'
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
-createApp(App)
-  .use(pinia)
-  .use(router)
-  .use(i18n)
-  .directive('perm', vPerm)
-  .mount('#app')
+createApp(App).use(pinia).use(router).use(i18n).directive('perm', vPerm).mount('#app')

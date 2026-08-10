@@ -32,9 +32,7 @@ const tabsStore = useTabsStore()
 const refreshKey = computed(() => tabsStore.getRefreshKey)
 
 // 页签关闭 → 组件名移出 include → 缓存随之销毁，两个关注点共用一份数据
-const cachedViews = computed(() =>
-  tabsStore.getTabs.filter((tab) => tab.meta.keepAlive).map((tab) => tab.name),
-)
+const cachedViews = computed(() => tabsStore.getTabs.filter((tab) => tab.meta.keepAlive).map((tab) => tab.name))
 </script>
 
 <style scoped>

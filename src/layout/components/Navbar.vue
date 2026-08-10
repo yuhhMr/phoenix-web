@@ -15,11 +15,7 @@
         <template v-for="item in breadcrumb" :key="item.path">
           <span v-if="!item.isFirst" class="text-text-secondary">/</span>
           <span v-if="item.isCurrent" class="text-text font-medium truncate">{{ item.title }}</span>
-          <RouterLink
-            v-else
-            :to="item.path"
-            class="text-text-secondary hover:text-primary transition-colors truncate"
-          >
+          <RouterLink v-else :to="item.path" class="text-text-secondary hover:text-primary transition-colors truncate">
             {{ item.title }}
           </RouterLink>
         </template>
@@ -87,10 +83,16 @@
           </div>
           <div class="p-4 text-sm text-text-secondary">{{ t('navbar.logoutConfirmMessage') }}</div>
           <div class="flex justify-end gap-2 px-4 py-3 border-t border-border bg-background/50">
-            <button class="px-4 py-2 text-sm border border-border rounded-md hover:bg-background" @click="logoutConfirmVisible = false">
+            <button
+              class="px-4 py-2 text-sm border border-border rounded-md hover:bg-background"
+              @click="logoutConfirmVisible = false"
+            >
               {{ t('common.cancel') }}
             </button>
-            <button class="px-4 py-2 text-sm bg-primary text-white rounded-md hover:bg-primary-dark" @click="confirmLogout">
+            <button
+              class="px-4 py-2 text-sm bg-primary text-white rounded-md hover:bg-primary-dark"
+              @click="confirmLogout"
+            >
               {{ t('common.confirm') }}
             </button>
           </div>

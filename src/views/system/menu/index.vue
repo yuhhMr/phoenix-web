@@ -27,18 +27,28 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">上级菜单</label>
-          <select v-model="form.parentId" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.parentId"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option :value="0">顶层</option>
             <option v-for="item in flatMenus" :key="item.menuId" :value="item.menuId">{{ item.menuName }}</option>
           </select>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">菜单名称</label>
-          <input v-model="form.menuName" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.menuName"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">菜单类型</label>
-          <select v-model="form.menuType" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.menuType"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="M">目录</option>
             <option value="C">菜单</option>
             <option value="F">按钮</option>
@@ -46,34 +56,60 @@
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">路由路径</label>
-          <input v-model="form.path" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.path"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">组件路径</label>
-          <input v-model="form.component" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.component"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">权限标识</label>
-          <input v-model="form.perms" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.perms"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">图标</label>
-          <input v-model="form.icon" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.icon"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">排序</label>
-          <input v-model.number="form.sort" type="number" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model.number="form.sort"
+            type="number"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">显示状态</label>
-          <select v-model="form.visible" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.visible"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="0">隐藏</option>
             <option value="1">显示</option>
           </select>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">菜单状态</label>
-          <select v-model="form.status" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.status"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="0">正常</option>
             <option value="1">停用</option>
           </select>
@@ -85,7 +121,7 @@
 
 <script setup lang="ts">
 // keep-alive 按组件 name 缓存，组件 name 须与路由 name 一致（约定见 router/index.ts）
-defineOptions({ name: 'Menu' })
+defineOptions({ name: 'SystemMenu' })
 import { ref, computed, onMounted } from 'vue'
 import MenuTreeNode from './MenuTreeNode.vue'
 import AppModal from '@/components/AppModal.vue'
@@ -121,19 +157,20 @@ const flatMenus = computed(() => {
   return walk(tree.value, [])
 })
 
-const resetForm = () => Object.assign(form, {
-  menuId: undefined,
-  parentId: 0,
-  menuName: '',
-  menuType: 'C',
-  path: '',
-  component: '',
-  perms: '',
-  icon: '',
-  sort: 0,
-  visible: '1',
-  status: '0',
-})
+const resetForm = () =>
+  Object.assign(form, {
+    menuId: undefined,
+    parentId: 0,
+    menuName: '',
+    menuType: 'C',
+    path: '',
+    component: '',
+    perms: '',
+    icon: '',
+    sort: 0,
+    visible: '1',
+    status: '0',
+  })
 
 const openCreate = (parentId: number) => {
   isEdit.value = false

@@ -5,12 +5,7 @@
   >
     <Logo :collapsed="appStore.sidebarCollapsed" />
     <nav class="flex-1 overflow-y-auto py-2 px-2 space-y-1">
-      <TreeMenu
-        v-for="item in menuTree"
-        :key="item.path"
-        :item="item"
-        :collapsed="appStore.sidebarCollapsed"
-      />
+      <TreeMenu v-for="item in menuTree" :key="item.path" :item="item" :collapsed="appStore.sidebarCollapsed" />
     </nav>
   </aside>
 </template>

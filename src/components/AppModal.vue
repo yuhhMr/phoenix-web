@@ -13,7 +13,11 @@
         </div>
         <div class="flex justify-end gap-2 px-4 py-3 border-t border-border bg-background/50">
           <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="close">取消</button>
-          <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" :disabled="loading" @click="submit">
+          <button
+            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
+            :disabled="loading"
+            @click="submit"
+          >
             {{ loading ? '保存中...' : '保存' }}
           </button>
         </div>

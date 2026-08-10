@@ -25,17 +25,25 @@
         <option value="1">已发布</option>
         <option value="2">已下线</option>
       </select>
-      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">查询</button>
+      <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark" @click="handleSearch">
+        查询
+      </button>
       <button class="px-4 py-2 border border-border rounded-md hover:bg-background" @click="resetQuery">重置</button>
-      <button v-perm="'system:notice:create'" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto" @click="openCreate">新增</button>
+      <button
+        v-perm="'system:notice:create'"
+        class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark ml-auto"
+        @click="openCreate"
+      >
+        新增
+      </button>
     </div>
 
     <DataTable
+      v-model:current="query.pageNum"
       :data="list"
       :columns="columns"
       :loading="loading"
       :total="total"
-      v-model:current="query.pageNum"
       :size="query.pageSize"
     />
 
@@ -43,22 +51,36 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">标题</label>
-          <input v-model="form.title" type="text" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary" />
+          <input
+            v-model="form.title"
+            type="text"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          />
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">类型</label>
-          <select v-model="form.noticeType" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.noticeType"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="NOTICE">通知</option>
             <option value="ANNOUNCE">公告</option>
           </select>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">内容</label>
-          <textarea v-model="form.content" rows="3" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+          <textarea
+            v-model="form.content"
+            rows="3"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          ></textarea>
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">优先级</label>
-          <select v-model.number="form.priority" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model.number="form.priority"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option :value="0">普通</option>
             <option :value="1">重要</option>
             <option :value="2">紧急</option>
@@ -66,7 +88,10 @@
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">发布范围</label>
-          <select v-model="form.publishScope" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <select
+            v-model="form.publishScope"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          >
             <option value="ALL">全部</option>
             <option value="ORG">指定组织</option>
             <option value="USER">指定用户</option>
@@ -74,7 +99,11 @@
         </div>
         <div>
           <label class="block text-sm font-medium mb-1">备注</label>
-          <textarea v-model="form.remark" rows="2" class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+          <textarea
+            v-model="form.remark"
+            rows="2"
+            class="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          ></textarea>
         </div>
       </div>
     </AppModal>
@@ -89,7 +118,15 @@ import { createColumnHelper } from '@tanstack/vue-table'
 import DataTable from '@/components/DataTable.vue'
 import AppModal from '@/components/AppModal.vue'
 import { usePermissionStore } from '@/store/permission'
-import { fetchNoticePage, createNotice, updateNotice, deleteNotice, publishNotice, offlineNotice, type NoticeItem } from '@/api/notice'
+import {
+  fetchNoticePage,
+  createNotice,
+  updateNotice,
+  deleteNotice,
+  publishNotice,
+  offlineNotice,
+  type NoticeItem,
+} from '@/api/notice'
 import type { PageRes } from '@/types/api'
 
 const columnHelper = createColumnHelper<NoticeItem>()
@@ -101,10 +138,26 @@ const priorityMap: Record<number, string> = { 0: '普通', 1: '重要', 2: '紧�
 
 const columns = [
   columnHelper.accessor('title', { header: '标题', size: 240 }),
-  columnHelper.accessor('noticeType', { header: '类型', size: 100, cell: (info) => typeMap[info.getValue()] || info.getValue() }),
-  columnHelper.accessor('priority', { header: '优先级', size: 100, cell: (info) => priorityMap[info.getValue()] || info.getValue() }),
-  columnHelper.accessor('publishStatus', { header: '状态', size: 100, cell: (info) => statusMap[info.getValue()] || info.getValue() }),
-  columnHelper.accessor('createdAt', { header: '创建时间', size: 170, cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-' }),
+  columnHelper.accessor('noticeType', {
+    header: '类型',
+    size: 100,
+    cell: (info) => typeMap[info.getValue()] || info.getValue(),
+  }),
+  columnHelper.accessor('priority', {
+    header: '优先级',
+    size: 100,
+    cell: (info) => priorityMap[info.getValue()] || info.getValue(),
+  }),
+  columnHelper.accessor('publishStatus', {
+    header: '状态',
+    size: 100,
+    cell: (info) => statusMap[info.getValue()] || info.getValue(),
+  }),
+  columnHelper.accessor('createdAt', {
+    header: '创建时间',
+    size: 170,
+    cell: (info) => info.getValue()?.slice(0, 19).replace('T', ' ') || '-',
+  }),
   columnHelper.display({
     id: 'actions',
     header: '操作',
@@ -112,17 +165,37 @@ const columns = [
     cell: ({ row }) => {
       const btns = []
       if (perm.hasPerm('system:notice:update') && row.original.publishStatus !== '1') {
-        btns.push(h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'))
+        btns.push(
+          h('button', { class: 'text-sm text-primary hover:underline', onClick: () => openEdit(row.original) }, '编辑'),
+        )
       }
       if (perm.hasPerm('system:notice:publish')) {
         if (row.original.publishStatus !== '1') {
-          btns.push(h('button', { class: 'text-sm text-green-600 hover:underline', onClick: () => publish(row.original.noticeId) }, '发布'))
+          btns.push(
+            h(
+              'button',
+              { class: 'text-sm text-green-600 hover:underline', onClick: () => publish(row.original.noticeId) },
+              '发布',
+            ),
+          )
         } else {
-          btns.push(h('button', { class: 'text-sm text-orange-500 hover:underline', onClick: () => offline(row.original.noticeId) }, '下线'))
+          btns.push(
+            h(
+              'button',
+              { class: 'text-sm text-orange-500 hover:underline', onClick: () => offline(row.original.noticeId) },
+              '下线',
+            ),
+          )
         }
       }
       if (perm.hasPerm('system:notice:delete')) {
-        btns.push(h('button', { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.noticeId) }, '删除'))
+        btns.push(
+          h(
+            'button',
+            { class: 'text-sm text-red-500 hover:underline', onClick: () => remove(row.original.noticeId) },
+            '删除',
+          ),
+        )
       }
       return h('div', { class: 'flex gap-3' }, btns)
     },
@@ -148,18 +221,28 @@ const form = reactive<Partial<NoticeItem>>({
   remark: '',
 })
 
-const resetForm = () => Object.assign(form, {
-  noticeId: undefined,
-  title: '',
-  noticeType: 'NOTICE',
-  content: '',
-  priority: 0,
-  publishScope: 'ALL',
-  publishTarget: undefined,
-  remark: '',
-})
-const openCreate = () => { isEdit.value = false; resetForm(); modalVisible.value = true }
-const openEdit = (row: NoticeItem) => { isEdit.value = true; resetForm(); Object.assign(form, row); modalVisible.value = true }
+const resetForm = () =>
+  Object.assign(form, {
+    noticeId: undefined,
+    title: '',
+    noticeType: 'NOTICE',
+    content: '',
+    priority: 0,
+    publishScope: 'ALL',
+    publishTarget: undefined,
+    remark: '',
+  })
+const openCreate = () => {
+  isEdit.value = false
+  resetForm()
+  modalVisible.value = true
+}
+const openEdit = (row: NoticeItem) => {
+  isEdit.value = true
+  resetForm()
+  Object.assign(form, row)
+  modalVisible.value = true
+}
 
 const save = async () => {
   saving.value = true
@@ -200,9 +283,22 @@ const loadData = async () => {
   }
 }
 
-const handleSearch = () => { query.pageNum = 1; loadData() }
-const resetQuery = () => { query.title = ''; query.noticeType = ''; query.publishStatus = ''; query.pageNum = 1; loadData() }
-const remove = async (id: number) => { if (!confirm('确认删除？')) return; await deleteNotice(id); loadData() }
+const handleSearch = () => {
+  query.pageNum = 1
+  loadData()
+}
+const resetQuery = () => {
+  query.title = ''
+  query.noticeType = ''
+  query.publishStatus = ''
+  query.pageNum = 1
+  loadData()
+}
+const remove = async (id: number) => {
+  if (!confirm('确认删除？')) return
+  await deleteNotice(id)
+  loadData()
+}
 
 watch(() => query.pageNum, loadData, { immediate: true })
 </script>

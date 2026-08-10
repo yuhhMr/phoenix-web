@@ -26,5 +26,4 @@ export interface LogQuery {
   endTime?: string
 }
 
-export const fetchLogPage = (params: LogQuery): Promise<PageRes<LogItem>> =>
-  request.get('/log/page', { params })
+export const fetchLogPage = (params: LogQuery): Promise<PageRes<LogItem>> => request.get('/log/page', { params })

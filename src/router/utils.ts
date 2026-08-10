@@ -112,10 +112,7 @@ export function hasRoutePermission(
  * @param permissions - 用户权限数组
  * @returns 过滤后的路由数组
  */
-export function filterPermissionRoutes(
-  routes: RouteRecordRaw[],
-  permissions: string[],
-): RouteRecordRaw[] {
+export function filterPermissionRoutes(routes: RouteRecordRaw[], permissions: string[]): RouteRecordRaw[] {
   return routes.filter((route) => {
     if (hasRoutePermission(route, permissions)) {
       if (route.children && route.children.length > 0) {
@@ -218,9 +215,7 @@ export function buildMenuTree(
 ): MenuItem[] {
   const menus: MenuItem[] = []
   for (const route of routes) {
-    const path = route.path.startsWith('/')
-      ? route.path
-      : `${basePath.replace(/\/$/, '')}/${route.path}`
+    const path = route.path.startsWith('/') ? route.path : `${basePath.replace(/\/$/, '')}/${route.path}`
 
     if (!hasPerm(route.meta?.perm)) continue
 

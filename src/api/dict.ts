@@ -19,8 +19,7 @@ export interface DictTypeQuery {
 export const fetchDictTypePage = (params: DictTypeQuery): Promise<PageRes<DictTypeItem>> =>
   request.get('/system/dict/type/page', { params })
 
-export const createDictType = (data: Partial<DictTypeItem>): Promise<number> =>
-  request.post('/system/dict/type', data)
+export const createDictType = (data: Partial<DictTypeItem>): Promise<number> => request.post('/system/dict/type', data)
 
 export const updateDictType = (data: Partial<DictTypeItem> & { dictTypeId: number }): Promise<void> =>
   request.put('/system/dict/type', data)

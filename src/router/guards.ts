@@ -37,10 +37,7 @@ function checkAuthenticated(): boolean {
  * @param userPermissions - 用户权限标识列表
  * @returns 是否有权限
  */
-function checkRoutePermission(
-  to: Parameters<typeof hasRoutePermission>[0],
-  userPermissions: string[],
-): boolean {
+function checkRoutePermission(to: Parameters<typeof hasRoutePermission>[0], userPermissions: string[]): boolean {
   return hasRoutePermission(to, userPermissions)
 }
 

@@ -88,9 +88,7 @@ const activeTab = computed({
 function menuItemClass(disabled: boolean) {
   return [
     'flex items-center px-4 py-1.5 transition-colors',
-    disabled
-      ? 'text-text-secondary/50 cursor-not-allowed'
-      : 'text-text cursor-pointer hover:bg-background',
+    disabled ? 'text-text-secondary/50 cursor-not-allowed' : 'text-text cursor-pointer hover:bg-background',
   ]
 }
 
