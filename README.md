@@ -40,6 +40,8 @@ npm run build
 npm run preview
 ```
 
+> **注意**：Vite 等工具以本地开发依赖形式安装（`node_modules/.bin/`），不要直接运行全局 `vite` 命令（会报 `Command 'vite' not found`）。开发请用 `npm run dev`，如需直接调用则使用 `npx vite`。
+
 ### 常用脚本说明
 
 | 脚本                 | 说明                                                                              |

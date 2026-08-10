@@ -17,6 +17,9 @@
     // Tailwind CSS 智能提示
     "tailwindCSS.includeLanguages": {
       "vue": "html"
+    },
+    "[json]": {
+      "editor.defaultFormatter": "vscode.json-language-features"
     }
   },
   "extensions": {
