@@ -12,7 +12,12 @@ body,
 
 /* 全局字体与主题色：使用 Tailwind 配置中定义的颜色令牌 */
 body {
+  /* 中英文兼容字体栈：优先使用系统默认中文字体，再回退到西文系统字体 */
   font-family:
+    'PingFang SC',
+    'Microsoft YaHei',
+    'Noto Sans SC',
+    'Hiragino Sans GB',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -21,6 +26,17 @@ body {
     'Helvetica Neue',
     Arial,
     sans-serif;
+  /* 统一行高，减少中英文混排时行高差异导致的布局抖动 */
+  line-height: 1.5;
+  /* 优化字体渲染，避免中英文切换时笔画粗细不一致 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: theme('colors.text');
   background-color: theme('colors.background');
+}
+
+/* 防止英文长单词撑破布局，同时保证中文正常换行 */
+body * {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
