@@ -1,14 +1,14 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { markRaw, defineAsyncComponent, defineComponent, h } from 'vue'
-import Layout from '@/layout/index.vue'
-import InnerLink from '@/layout/components/InnerLink/index.vue'
 import type { MenuTreeItem } from '@/api/menu'
 
 // 预加载所有视图组件，用于根据后端返回的 component 路径动态匹配
 const views = import.meta.glob('@/views/**/*.vue')
 
-const RawLayout = markRaw(Layout)
-const RawInnerLink = markRaw(InnerLink)
+// Layout / InnerLink 使用异步组件延迟加载，避免 Sidebar → permission store → dynamic.ts
+// → Layout 的循环依赖导致 `Cannot access 'Layout' before initialization`。
+const AsyncLayout = defineAsyncComponent(() => import('@/layout/index.vue'))
+const AsyncInnerLink = defineAsyncComponent(() => import('@/layout/components/InnerLink/index.vue'))
 
 // 目录菜单类型
 const MENU_TYPE_DIR = 'M'
@@ -25,8 +25,8 @@ function getFullPath(parentPath: string, childPath: string): string {
 
 // 根据 component 字段加载对应视图组件
 function loadComponent(component: string | undefined, name: string | undefined): RouteRecordRaw['component'] {
-  if (component === 'Layout') return RawLayout
-  if (component === 'InnerLink') return RawInnerLink
+  if (component === 'Layout') return markRaw(AsyncLayout)
+  if (component === 'InnerLink') return markRaw(AsyncInnerLink)
   if (!component) return undefined
 
   const key = `/src/views/${component}.vue`
@@ -56,7 +56,7 @@ function buildRoute(item: MenuTreeItem, parentPath = '', isChild = false): Route
   const route = {
     path: isChild ? relativePath : fullPath,
     name: item.menuName,
-    component: isDir ? RawLayout : loadComponent(item.component, item.menuName),
+    component: isDir ? markRaw(AsyncLayout) : loadComponent(item.component, item.menuName),
     meta: {
       title,
       titleKey: `route.${item.menuName}`,
