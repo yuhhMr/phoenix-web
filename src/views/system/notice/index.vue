@@ -115,7 +115,7 @@
 defineOptions({ name: 'Notice' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { DataTable } from '@/components/ui/data-table'
+import { DataTable } from '@/components/ui/table'
 import { DialogModal } from '@/components/ui/dialog'
 import { usePermissionStore } from '@/store/permission'
 import {

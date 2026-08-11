@@ -30,7 +30,7 @@
 defineOptions({ name: 'Online' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
-import { DataTable } from '@/components/ui/data-table'
+import { DataTable } from '@/components/ui/table'
 import { usePermissionStore } from '@/store/permission'
 import { fetchOnlinePage, kickOnlineUser, type OnlineUserItem } from '@/api/online'
 import type { PageRes } from '@/types/api'
