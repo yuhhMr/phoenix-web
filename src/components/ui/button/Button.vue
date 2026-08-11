@@ -16,6 +16,7 @@ interface Props {
   loading?: boolean
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
+  class?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   disabled: false,
   type: 'button',
+  class: '',
 })
 
 defineOptions({
@@ -35,9 +37,7 @@ const slots = useSlots()
 const attrs = useAttrs()
 
 // 合并 cva 生成的变体类名与外部传入的 class
-const classes = computed(() =>
-  cn(buttonVariants({ variant: props.variant, size: props.size }), attrs.class as string | undefined),
-)
+const classes = computed(() => cn(buttonVariants({ variant: props.variant, size: props.size }), props.class))
 
 // loading 状态视为禁用，防止重复提交
 const disabled = computed(() => props.disabled || props.loading)

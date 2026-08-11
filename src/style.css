@@ -178,11 +178,11 @@ body * {
   overflow-wrap: break-word;
 }
 
-/* 统一 focus-visible 样式：所有可聚焦元素使用主题色焦点环 */
-*:focus-visible {
-  outline: 2px solid hsl(var(--ring) / 0.5);
-  outline-offset: 2px;
-}
+/*
+ * focus-visible 由各交互组件自行管理（Button/Input/Checkbox/Switch 等），
+ * 避免全局 outline 与组件级 ring 叠加导致焦点指示器过粗。
+ * 原生元素若需要焦点样式，应通过具体组件或工具类补充。
+ */
 
 /* 滚动条：使用半透明风格，减少视觉干扰 */
 ::-webkit-scrollbar {
