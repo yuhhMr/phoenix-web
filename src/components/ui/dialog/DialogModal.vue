@@ -1,4 +1,8 @@
 <script setup lang="ts">
+/**
+ * 便捷弹窗：在组合式 Dialog 之上封装旧 AppModal 的 API（title/loading/submit）。
+ * 适合简单的新增/编辑弹窗；复杂弹窗建议直接使用 DialogRoot/DialogContent 组合。
+ */
 import { Button } from '@/components/ui/button'
 import {
   DialogContent,

@@ -1,4 +1,10 @@
 <script setup lang="ts">
+/**
+ * 通用输入框：统一文本/密码输入的样式与交互。
+ * - 默认显示清空按钮，可在登录表单等场景关闭。
+ * - 密码框有值时自动显示可视化切换，避免业务页再包一层 eye 按钮。
+ * - 前缀图标与尾部按钮会动态调整 input 内边距，防止文字被遮挡。
+ */
 import { computed, ref } from 'vue'
 import { cn } from '@/utils/cn'
 import IconClose from '~icons/lucide/x'
@@ -39,6 +45,7 @@ const slots = defineSlots<{
   prefix?: () => unknown
 }>()
 
+// 密码框可视化状态由组件内部维护，避免与外部 type 控制产生双状态源
 const passwordVisible = ref(false)
 
 const isPassword = computed(() => props.type === 'password')
@@ -48,6 +55,7 @@ const showClear = computed(() => props.clearable && !props.disabled && hasValue.
 const showPasswordToggle = computed(() => isPassword.value && !props.disabled && hasValue.value)
 const hasPrefix = computed(() => !!slots.prefix)
 
+// 根据尾部按钮数量计算右侧内边距，保证文字与按钮不重叠
 const suffixCount = computed(() => {
   let count = 0
   if (showClear.value) count++

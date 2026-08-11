@@ -1,4 +1,8 @@
 <script setup lang="ts" generic="T extends object">
+/**
+ * 数据表格：基于 tanstack 表格逻辑 + ui/table 样式组件拼装。
+ * 负责表头渲染、loading/空数据提示、分页控制，业务页只需传入 data/columns 和分页参数。
+ */
 import { computed } from 'vue'
 import { useVueTable, getCoreRowModel, FlexRender, type ColumnDef } from '@tanstack/vue-table'
 import { Button } from '@/components/ui/button'
