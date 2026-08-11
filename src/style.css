@@ -1,13 +1,16 @@
+/* Tailwind CSS 指令：注入基础样式、组件类、工具类 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 全屏布局：html/body/#app 均占满视口高度 */
 html,
 body,
 #app {
   height: 100%;
 }
 
+/* 全局字体与主题色：使用 Tailwind 配置中定义的颜色令牌 */
 body {
   font-family:
     system-ui,

@@ -14,6 +14,9 @@
     "[vue]": {
       "editor.defaultFormatter": "Vue.volar"
     },
+    // 忽略 Tailwind CSS 指令（@tailwind / @apply 等）的未知 at-rule 警告
+    "css.lint.unknownAtRules": "ignore",
+    "scss.lint.unknownAtRules": "ignore",
   },
   "extensions": {
     "recommendations": [
