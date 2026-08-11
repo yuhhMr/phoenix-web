@@ -9,33 +9,19 @@
           class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
           :placeholder="$t('login.username')"
           autocomplete="username"
-          @keyup.enter="handleLogin"
         >
           <template #prefix><IconUser class="text-slate-400" /></template>
         </Input>
 
-        <div class="relative">
-          <Input
-            v-model="form.password"
-            :type="passwordVisible ? 'text' : 'password'"
-            class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary pr-10"
-            :placeholder="$t('login.password')"
-            autocomplete="current-password"
-            @keyup.enter="handleLogin"
-          >
-            <template #prefix><IconLock class="text-slate-400" /></template>
-          </Input>
-          <button
-            type="button"
-            tabindex="-1"
-            class="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:bg-slate-200/70 hover:text-slate-600 transition-colors"
-            :title="passwordVisible ? $t('login.hidePassword') : $t('login.showPassword')"
-            @click="passwordVisible = !passwordVisible"
-          >
-            <IconEyeOff v-if="passwordVisible" class="size-4" />
-            <IconEye v-else class="size-4" />
-          </button>
-        </div>
+        <Input
+          v-model="form.password"
+          type="password"
+          class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
+          :placeholder="$t('login.password')"
+          autocomplete="current-password"
+        >
+          <template #prefix><IconLock class="text-slate-400" /></template>
+        </Input>
 
         <div class="captcha-row">
           <Input
@@ -43,7 +29,6 @@
             class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
             :placeholder="$t('login.captcha')"
             :maxlength="4"
-            @keyup.enter="handleLogin"
           >
             <template #prefix><IconShield class="text-slate-400" /></template>
           </Input>
@@ -84,8 +69,6 @@ import { useI18n } from 'vue-i18n'
 import IconUser from '~icons/lucide/user'
 import IconLock from '~icons/lucide/lock'
 import IconShield from '~icons/lucide/shield-check'
-import IconEye from '~icons/lucide/eye'
-import IconEyeOff from '~icons/lucide/eye-off'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { getCaptcha, getPublicKey, login, getLoginInfo } from '@/api/auth'
@@ -112,7 +95,6 @@ const captchaImg = ref('')
 const captchaUuid = ref('')
 const loading = ref(false)
 const errorMsg = ref('')
-const passwordVisible = ref(false)
 
 const loadCaptcha = async () => {
   try {
