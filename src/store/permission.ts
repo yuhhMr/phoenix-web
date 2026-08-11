@@ -6,6 +6,9 @@ import { generateRoutesFromMenu } from '@/router/dynamic'
 import { filterPermissionRoutes, hasRoutePermission } from '@/router/utils'
 import { useUserStore } from './user'
 
+// 与静态路由冲突的路径应跳过，避免重复注册及控制台警告
+const STATIC_PATHS = new Set(['/login', '/', '/index', '/403', '/404'])
+
 // 权限与动态路由状态管理
 export const usePermissionStore = defineStore(
   'permission',
@@ -60,7 +63,9 @@ export const usePermissionStore = defineStore(
 
         if (router) {
           generated.forEach((route) => {
-            router.addRoute(route)
+            if (!STATIC_PATHS.has(route.path)) {
+              router.addRoute(route)
+            }
           })
         }
 

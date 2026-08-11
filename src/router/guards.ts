@@ -6,7 +6,7 @@ import { usePermissionStore } from '@/store/permission'
 import { useTabsStore } from '@/store/tabs'
 import { buildRedirectPath } from './utils'
 import { APP_TITLE } from '@/config/app'
-import { RouteNames } from './constants'
+import { RouteNames, RoutePaths } from './constants'
 
 NProgress.configure({ showSpinner: false })
 
@@ -32,7 +32,15 @@ export function setupGuards(router: Router) {
     // 已登录但动态路由未加载：先拉取菜单树并生成路由，再重新导航
     if (!permissionStore.isRoutesLoaded) {
       try {
-        await permissionStore.generateRoutes(router)
+        const generated = await permissionStore.generateRoutes(router)
+        // 访问根路径时，重定向到第一个有权限的动态菜单；无动态路由则回退静态首页
+        if (to.path === '/') {
+          const firstRoute = generated.find((r) => permissionStore.hasPerm(r.meta?.perm as string | undefined))
+          if (firstRoute) {
+            return { path: firstRoute.path, replace: true }
+          }
+          return { path: RoutePaths.Index, replace: true }
+        }
         return { path: to.fullPath, replace: true, query: to.query }
       } catch (error) {
         console.error('[路由守卫] 动态路由加载失败:', error)

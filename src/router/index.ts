@@ -17,7 +17,14 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: Layout,
     redirect: RoutePaths.Index,
-    children: [],
+    children: [
+      {
+        path: RoutePaths.Index.replace(/^\//, ''),
+        name: RouteNames.Index,
+        component: () => import('@/views/index.vue'),
+        meta: { titleKey: 'route.index', icon: 'home', showInMenu: true },
+      },
+    ],
     meta: { titleKey: 'route.index' },
   },
   {
