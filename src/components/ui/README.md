@@ -21,10 +21,21 @@
   - [组件目录](#组件目录)
     - [Button 按钮](#button-按钮)
     - [Input 输入框](#input-输入框)
+    - [Textarea 文本域](#textarea-文本域)
+    - [Label 标签](#label-标签)
     - [Badge 徽章](#badge-徽章)
     - [Card 卡片](#card-卡片)
     - [Dialog 对话框](#dialog-对话框)
+    - [DropdownMenu 下拉菜单](#dropdownmenu-下拉菜单)
+    - [Select 选择器](#select-选择器)
+    - [Tabs 标签页](#tabs-标签页)
+    - [Tooltip 文字提示](#tooltip-文字提示)
+    - [Checkbox 复选框](#checkbox-复选框)
+    - [Switch 开关](#switch-开关)
+    - [Separator 分隔线](#separator-分隔线)
+    - [Skeleton 骨架屏](#skeleton-骨架屏)
     - [Table / DataTable 表格](#table--datatable-表格)
+    - [Form 表单](#form-表单)
   - [扩展新组件](#扩展新组件)
 
 <!-- /TOC -->
@@ -132,6 +143,7 @@ import { Button } from '@/components/ui/button'
 | disabled | `boolean`                                                              | false   | 禁用                   |
 | type     | `button` / `submit` / `reset`                                          | button  | 原生 button type       |
 | as-child | `boolean`                                                              | false   | 是否将样式合并到子元素 |
+| class    | `string`                                                               | -       | 额外样式类             |
 
 > `loading` 会自动等同于 `disabled`，防止重复提交。
 
@@ -194,6 +206,61 @@ const value = ref('')
 | update:modelValue | 值变化       |
 | enter             | 按下回车     |
 | clear             | 点击清空按钮 |
+
+---
+
+### Textarea 文本域
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Textarea } from '@/components/ui/textarea'
+
+const value = ref('')
+</script>
+
+<template>
+  <Textarea v-model="value" placeholder="请输入描述" />
+  <Textarea v-model="value" :error="true" placeholder="错误状态" />
+</template>
+```
+
+#### Props
+
+| 属性        | 类型      | 默认值 | 说明       |
+| ----------- | --------- | ------ | ---------- |
+| modelValue  | `string`  | `''`   | 绑定值     |
+| placeholder | `string`  | -      | 占位符     |
+| disabled    | `boolean` | false  | 禁用       |
+| error       | `boolean` | false  | 错误态样式 |
+| class       | `string`  | -      | 额外样式类 |
+
+#### Emits
+
+| 事件              | 说明   |
+| ----------------- | ------ |
+| update:modelValue | 值变化 |
+
+---
+
+### Label 标签
+
+```vue
+<script setup lang="ts">
+import { Label } from '@/components/ui/label'
+</script>
+
+<template>
+  <Label for="username">用户名</Label>
+</template>
+```
+
+#### Props
+
+| 属性  | 类型     | 默认值 | 说明            |
+| ----- | -------- | ------ | --------------- |
+| for   | `string` | -      | 关联表单元素 id |
+| class | `string` | -      | 额外样式类      |
 
 ---
 
@@ -332,6 +399,332 @@ const handleSubmit = () => {
 
 ---
 
+### DropdownMenu 下拉菜单
+
+基于 ark-ui Menu，提供触发器、内容区、菜单项、复选/单选、子菜单等组合。
+
+```vue
+<script setup lang="ts">
+import {
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <DropdownMenuRoot>
+    <DropdownMenuTrigger as-child>
+      <Button variant="outline">打开菜单</Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="w-48">
+      <DropdownMenuLabel>我的账号</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem>个人设置</DropdownMenuItem>
+      <DropdownMenuItem variant="destructive">退出登录</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenuRoot>
+</template>
+```
+
+#### 组件清单
+
+| 组件                       | 说明                    |
+| -------------------------- | ----------------------- |
+| `DropdownMenuRoot`         | 根容器，管理展开状态    |
+| `DropdownMenuTrigger`      | 触发器，通常包裹 Button |
+| `DropdownMenuContent`      | 下拉内容区              |
+| `DropdownMenuItem`         | 普通菜单项              |
+| `DropdownMenuLabel`        | 分组标签                |
+| `DropdownMenuSeparator`    | 分隔线                  |
+| `DropdownMenuShortcut`     | 快捷键提示              |
+| `DropdownMenuGroup`        | 分组容器                |
+| `DropdownMenuCheckboxItem` | 复选菜单项              |
+| `DropdownMenuRadioGroup`   | 单选组                  |
+| `DropdownMenuRadioItem`    | 单选菜单项              |
+| `DropdownMenuSub`          | 子菜单根                |
+| `DropdownMenuSubTrigger`   | 子菜单触发器            |
+| `DropdownMenuSubContent`   | 子菜单内容              |
+
+#### DropdownMenuItem Props
+
+| 属性    | 类型                      | 默认值  | 说明                    |
+| ------- | ------------------------- | ------- | ----------------------- |
+| variant | `default` / `destructive` | default | 危险样式（红色文字）    |
+| inset   | `boolean`                 | false   | 左侧预留图标/复选框空间 |
+| class   | `string`                  | -       | 额外样式类              |
+
+---
+
+### Select 选择器
+
+提供组合式 primitive（SelectRoot / SelectTrigger / SelectValue / SelectContent / SelectItem 等），以及便捷封装 `Select`。
+
+#### 便捷封装（推荐简单场景）
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Select } from '@/components/ui/select'
+
+const value = ref('')
+const options = [
+  { label: '启用', value: '1' },
+  { label: '禁用', value: '0' },
+]
+</script>
+
+<template>
+  <Select v-model="value" :options="options" placeholder="请选择状态" />
+</template>
+```
+
+#### 组合式（需要完全控制时）
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { createListCollection } from '@ark-ui/vue/collection'
+import { SelectRoot, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+
+const value = ref(['1'])
+const collection = createListCollection({
+  items: [
+    { label: '启用', value: '1' },
+    { label: '禁用', value: '0' },
+  ],
+})
+</script>
+
+<template>
+  <SelectRoot :collection="collection" v-model="value">
+    <SelectTrigger>
+      <SelectValue placeholder="请选择" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem v-for="item in collection.items" :key="item.value" :item="item">
+        {{ item.label }}
+      </SelectItem>
+    </SelectContent>
+  </SelectRoot>
+</template>
+```
+
+#### Select（便捷）Props
+
+| 属性         | 类型                                              | 默认值 | 说明             |
+| ------------ | ------------------------------------------------- | ------ | ---------------- |
+| modelValue   | `string`                                          | -      | 当前选中的值     |
+| options      | `SelectOption[]` / `ListCollection<SelectOption>` | -      | 选项列表         |
+| placeholder  | `string`                                          | -      | 占位符           |
+| disabled     | `boolean`                                         | false  | 禁用             |
+| triggerClass | `string`                                          | -      | 触发器额外样式类 |
+
+#### Emits
+
+| 事件              | 说明       |
+| ----------------- | ---------- |
+| update:modelValue | 选中值变化 |
+
+---
+
+### Tabs 标签页
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { TabsRoot, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+
+const value = ref('account')
+</script>
+
+<template>
+  <TabsRoot v-model="value">
+    <TabsList>
+      <TabsTrigger value="account">账号</TabsTrigger>
+      <TabsTrigger value="password">密码</TabsTrigger>
+    </TabsList>
+    <TabsContent value="account">账号设置内容</TabsContent>
+    <TabsContent value="password">密码修改内容</TabsContent>
+  </TabsRoot>
+</template>
+```
+
+#### 组件清单
+
+| 组件          | 说明         |
+| ------------- | ------------ |
+| `TabsRoot`    | 根容器       |
+| `TabsList`    | 标签按钮列表 |
+| `TabsTrigger` | 单个标签按钮 |
+| `TabsContent` | 对应内容面板 |
+
+---
+
+### Tooltip 文字提示
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+</script>
+
+<template>
+  <TooltipProvider>
+    <TooltipRoot>
+      <TooltipTrigger as-child>
+        <Button variant="outline">悬停我</Button>
+      </TooltipTrigger>
+      <TooltipContent>提示文本</TooltipContent>
+    </TooltipRoot>
+  </TooltipProvider>
+</template>
+```
+
+#### 组件清单
+
+| 组件              | 说明                     |
+| ----------------- | ------------------------ |
+| `TooltipProvider` | 提供全局配置（延迟等）   |
+| `TooltipRoot`     | 根容器                   |
+| `TooltipTrigger`  | 触发器，通常包裹目标元素 |
+| `TooltipContent`  | 提示内容，含箭头         |
+
+#### TooltipProvider Props
+
+| 属性          | 类型     | 默认值 | 说明             |
+| ------------- | -------- | ------ | ---------------- |
+| delayDuration | `number` | 0      | 显示延迟（毫秒） |
+
+---
+
+### Checkbox 复选框
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+
+const checked = ref(false)
+</script>
+
+<template>
+  <Checkbox v-model:checked="checked">
+    <Label>记住我</Label>
+  </Checkbox>
+</template>
+```
+
+#### Props
+
+继承 ark-ui `CheckboxRootProps`，常用项如下：
+
+| 属性     | 类型                        | 默认值 | 说明       |
+| -------- | --------------------------- | ------ | ---------- |
+| checked  | `boolean` / `indeterminate` | false  | 选中状态   |
+| disabled | `boolean`                   | false  | 禁用       |
+| class    | `string`                    | -      | 额外样式类 |
+
+#### Emits
+
+| 事件           | 说明         |
+| -------------- | ------------ |
+| update:checked | 选中状态变化 |
+| checkedChange  | 选中状态变化 |
+
+---
+
+### Switch 开关
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+
+const enabled = ref(false)
+</script>
+
+<template>
+  <Switch v-model:checked="enabled">
+    <Label>启用通知</Label>
+  </Switch>
+</template>
+```
+
+#### Props
+
+继承 ark-ui `SwitchRootProps`，常用项如下：
+
+| 属性     | 类型      | 默认值 | 说明       |
+| -------- | --------- | ------ | ---------- |
+| checked  | `boolean` | false  | 开启状态   |
+| disabled | `boolean` | false  | 禁用       |
+| class    | `string`  | -      | 额外样式类 |
+
+#### Emits
+
+| 事件           | 说明         |
+| -------------- | ------------ |
+| update:checked | 开启状态变化 |
+| checkedChange  | 开启状态变化 |
+
+---
+
+### Separator 分隔线
+
+```vue
+<script setup lang="ts">
+import { Separator } from '@/components/ui/separator'
+</script>
+
+<template>
+  <Separator />
+  <Separator orientation="vertical" class="h-4" />
+</template>
+```
+
+#### Props
+
+| 属性        | 类型                      | 默认值     | 说明                        |
+| ----------- | ------------------------- | ---------- | --------------------------- |
+| orientation | `horizontal` / `vertical` | horizontal | 方向                        |
+| decorative  | `boolean`                 | true       | 是否用于装饰（aria-hidden） |
+| class       | `string`                  | -          | 额外样式类                  |
+
+---
+
+### Skeleton 骨架屏
+
+```vue
+<script setup lang="ts">
+import { Skeleton } from '@/components/ui/skeleton'
+</script>
+
+<template>
+  <div class="flex items-center gap-4">
+    <Skeleton class="size-12 rounded-full" />
+    <div class="space-y-2">
+      <Skeleton class="h-4 w-32" />
+      <Skeleton class="h-4 w-24" />
+    </div>
+  </div>
+</template>
+```
+
+#### Props
+
+| 属性  | 类型     | 默认值 | 说明       |
+| ----- | -------- | ------ | ---------- |
+| class | `string` | -      | 额外样式类 |
+
+---
+
 ### Table / DataTable 表格
 
 #### 基础表格（纯样式）
@@ -404,6 +797,62 @@ const loading = ref(false)
 | 事件           | 说明     |
 | -------------- | -------- |
 | update:current | 页码变化 |
+
+---
+
+### Form 表单
+
+用于统一表单项的间距、标签、错误提示与描述文本。通常与 `vee-validate` 或原生校验结合使用。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+
+const email = ref('')
+const error = ref(false)
+</script>
+
+<template>
+  <FormItem>
+    <FormLabel for="email" :error="error">邮箱</FormLabel>
+    <FormControl id="email" :error="error">
+      <Input v-model="email" placeholder="请输入邮箱" />
+    </FormControl>
+    <FormDescription>我们将使用此邮箱联系你。</FormDescription>
+    <FormMessage v-if="error">邮箱格式不正确</FormMessage>
+  </FormItem>
+
+  <Button type="submit">提交</Button>
+</template>
+```
+
+#### 组件清单
+
+| 组件              | 说明                                                                |
+| ----------------- | ------------------------------------------------------------------- |
+| `FormItem`        | 表单项容器，控制垂直间距                                            |
+| `FormLabel`       | 表单项标签，支持 `error` 态变红                                     |
+| `FormControl`     | 表单控件包装器，通过 slot props 向子元素注入 `id` 与 `aria-invalid` |
+| `FormDescription` | 辅助说明文本                                                        |
+| `FormMessage`     | 错误提示文本                                                        |
+
+#### FormLabel Props
+
+| 属性  | 类型      | 默认值 | 说明           |
+| ----- | --------- | ------ | -------------- |
+| for   | `string`  | -      | 关联控件 id    |
+| error | `boolean` | false  | 错误态（红色） |
+| class | `string`  | -      | 额外样式类     |
+
+#### FormControl Slot Props
+
+| 属性         | 类型      | 说明         |
+| ------------ | --------- | ------------ |
+| id           | `string`  | 控件 id      |
+| aria-invalid | `boolean` | 是否校验失败 |
 
 ---
 
