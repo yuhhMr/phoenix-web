@@ -39,6 +39,24 @@ export default {
   },
   route: {
     unknown: '未知页面',
+    login: '登录',
+    index: '首页',
+    monitor: '监控运维',
+    online: '在线用户',
+    job: '定时任务',
+    jobLog: '任务日志',
+    log: '日志管理',
+    system: '系统管理',
+    user: '用户管理',
+    profile: '个人中心',
+    role: '角色管理',
+    menu: '菜单管理',
+    org: '组织管理',
+    dict: '字典管理',
+    config: '参数设置',
+    notice: '消息中心',
+    forbidden: '403',
+    notFound: '404',
   },
   // 页签右键菜单（五项，键名按本项目的嵌套风格组织）
   tabs: {
@@ -67,6 +85,11 @@ export default {
   notFound: {
     title: '404',
     message: '抱歉，你访问的页面不存在',
+    backHome: '返回首页',
+  },
+  forbidden: {
+    title: '403',
+    message: '抱歉，你没有权限访问该页面',
     backHome: '返回首页',
   },
 }

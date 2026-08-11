@@ -1,15 +1,7 @@
 import type { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
+import { getRouteTitle } from '@/utils/routeTitle'
 
-/**
- * 路由工具函数。
- *
- * 前半部分（buildRedirectPath … buildBreadcrumb）当前主要服务守卫的 redirect
- * 构建与权限校验，并为将来后端动态路由端点（/auth/routes 类）留好形状
- * （动态路由生成时 generateTree/filterPermissionRoutes 可直接复用）。
- *
- * 后半部分（MenuItem/buildMenuTree）是静态路由下的菜单构建，
- * 供 Sidebar/Navbar 消费。
- */
+// 路由工具函数：供守卫、Sidebar、Navbar 使用的纯函数集合
 
 /**
  * 构建不带 redirect 参数的 redirect 值（避免登录回跳时 redirect 嵌套）
@@ -217,17 +209,21 @@ export function buildMenuTree(
   for (const route of routes) {
     const path = route.path.startsWith('/') ? route.path : `${basePath.replace(/\/$/, '')}/${route.path}`
 
+    // 显式声明不在菜单中展示的路由，跳过
+    if (route.meta?.showInMenu === false) continue
     if (!hasPerm(route.meta?.perm)) continue
 
     const children = route.children ? buildMenuTree(route.children, hasPerm, path) : []
-    if (!route.meta?.title) continue
+    // 无 title/titleKey 的纯 redirect 节点不进菜单
+    const title = getRouteTitle(route)
+    if (!title || title === String(route.name)) continue
     // 有 children 定义但全部被权限过滤掉的目录，不产出空壳
     if (route.children?.length && children.length === 0) continue
 
     menus.push({
       path,
-      title: route.meta.title,
-      icon: route.meta.icon,
+      title,
+      icon: route.meta?.icon,
       children: children.length ? children : undefined,
     })
   }

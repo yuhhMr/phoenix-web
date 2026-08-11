@@ -24,6 +24,8 @@ declare module 'vue-router' {
     keepAlive?: boolean
     /** 为 true 时访问后不生成 TagsView 页签 */
     noTagsView?: boolean
+    /** 是否在菜单中显示；false 表示路由可访问但不在侧边栏展示 */
+    showInMenu?: boolean
   }
 }
 
