@@ -4,44 +4,49 @@
       <h2 class="login-title">Phoenix</h2>
 
       <form class="login-form" @submit.prevent="handleLogin">
-        <AppInput
+        <Input
           v-model="form.username"
-          variant="glass"
-          size="lg"
+          class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
           :placeholder="$t('login.username')"
           autocomplete="username"
-          @enter="handleLogin"
+          @keyup.enter="handleLogin"
         >
-          <template #prefix><IconUser /></template>
-        </AppInput>
+          <template #prefix><IconUser class="text-slate-400" /></template>
+        </Input>
 
-        <AppInput
-          v-model="form.password"
-          type="password"
-          variant="glass"
-          size="lg"
-          :placeholder="$t('login.password')"
-          autocomplete="current-password"
-          :clear-title="$t('login.clear')"
-          :show-title="$t('login.showPassword')"
-          :hide-title="$t('login.hidePassword')"
-          @enter="handleLogin"
-        >
-          <template #prefix><IconLock /></template>
-        </AppInput>
+        <div class="relative">
+          <Input
+            v-model="form.password"
+            :type="passwordVisible ? 'text' : 'password'"
+            class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary pr-10"
+            :placeholder="$t('login.password')"
+            autocomplete="current-password"
+            @keyup.enter="handleLogin"
+          >
+            <template #prefix><IconLock class="text-slate-400" /></template>
+          </Input>
+          <button
+            type="button"
+            tabindex="-1"
+            class="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 hover:bg-slate-200/70 hover:text-slate-600 transition-colors"
+            :title="passwordVisible ? $t('login.hidePassword') : $t('login.showPassword')"
+            @click="passwordVisible = !passwordVisible"
+          >
+            <IconEyeOff v-if="passwordVisible" class="size-4" />
+            <IconEye v-else class="size-4" />
+          </button>
+        </div>
 
         <div class="captcha-row">
-          <AppInput
+          <Input
             v-model="form.captchaCode"
-            variant="glass"
-            size="lg"
+            class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
             :placeholder="$t('login.captcha')"
             :maxlength="4"
-            :clear-title="$t('login.clear')"
-            @enter="handleLogin"
+            @keyup.enter="handleLogin"
           >
-            <template #prefix><IconShield /></template>
-          </AppInput>
+            <template #prefix><IconShield class="text-slate-400" /></template>
+          </Input>
           <img
             v-if="captchaImg"
             :src="captchaImg"
@@ -62,9 +67,9 @@
 
         <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
 
-        <AppButton native-type="submit" size="lg" class="w-full tracking-[6px]" :loading="loading">
+        <Button type="submit" size="lg" class="w-full tracking-[6px]" :loading="loading">
           {{ loading ? $t('login.loading') : $t('login.submit') }}
-        </AppButton>
+        </Button>
       </form>
     </div>
 
@@ -79,8 +84,10 @@ import { useI18n } from 'vue-i18n'
 import IconUser from '~icons/lucide/user'
 import IconLock from '~icons/lucide/lock'
 import IconShield from '~icons/lucide/shield-check'
-import AppInput from '@/components/AppInput.vue'
-import AppButton from '@/components/AppButton.vue'
+import IconEye from '~icons/lucide/eye'
+import IconEyeOff from '~icons/lucide/eye-off'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { getCaptcha, getPublicKey, login, getLoginInfo } from '@/api/auth'
 import { useUserStore } from '@/store/user'
 import { usePermissionStore } from '@/store/permission'
@@ -105,6 +112,7 @@ const captchaImg = ref('')
 const captchaUuid = ref('')
 const loading = ref(false)
 const errorMsg = ref('')
+const passwordVisible = ref(false)
 
 const loadCaptcha = async () => {
   try {
