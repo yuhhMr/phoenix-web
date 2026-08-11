@@ -1,19 +1,24 @@
 <script setup lang="ts">
 /**
  * 通用输入框：统一文本/密码输入的样式与交互。
+ *
+ * 设计要点：
  * - 默认显示清空按钮，可在登录表单等场景关闭。
- * - 密码框有值时自动显示可视化切换，避免业务页再包一层 eye 按钮。
+ * - 密码框有值时自动显示可视化切换，业务层无需再包 eye 按钮。
  * - 前缀图标与尾部按钮会动态调整 input 内边距，防止文字被遮挡。
+ * - 样式逻辑委托给 inputVariants，组件内只保留状态计算与事件转发。
  */
-import { computed, ref } from 'vue'
+import { computed, ref, useAttrs } from 'vue'
 import { cn } from '@/utils/cn'
 import IconClose from '~icons/lucide/x'
 import IconEye from '~icons/lucide/eye'
 import IconEyeOff from '~icons/lucide/eye-off'
+import { inputVariants, type InputVariants } from './inputVariants'
 
 interface Props {
   modelValue?: string
   type?: 'text' | 'password'
+  size?: InputVariants['size']
   placeholder?: string
   maxlength?: number | string
   autocomplete?: string
@@ -26,6 +31,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   type: 'text',
+  size: 'default',
   placeholder: undefined,
   maxlength: undefined,
   autocomplete: undefined,
@@ -45,6 +51,12 @@ const slots = defineSlots<{
   prefix?: () => unknown
 }>()
 
+defineOptions({
+  inheritAttrs: false,
+})
+
+const attrs = useAttrs()
+
 // 密码框可视化状态由组件内部维护，避免与外部 type 控制产生双状态源
 const passwordVisible = ref(false)
 
@@ -60,17 +72,17 @@ const suffixCount = computed(() => {
   let count = 0
   if (showClear.value) count++
   if (showPasswordToggle.value) count++
-  return count
+  return count === 0 ? 'none' : count === 1 ? 'single' : 'multiple'
 })
 
 const inputClass = computed(() =>
   cn(
-    'flex h-9 w-full min-w-0 rounded-md border border-input bg-input-background px-3 py-1 text-sm text-foreground shadow-sm transition-[color,box-shadow] outline-none placeholder:text-muted-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-    'focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50',
-    props.error && 'border-destructive focus-visible:ring-destructive/30',
-    hasPrefix.value && 'pl-9',
-    suffixCount.value === 1 && 'pr-9',
-    suffixCount.value >= 2 && 'pr-14',
+    inputVariants({
+      size: props.size,
+      error: props.error,
+      prefix: hasPrefix.value,
+      suffix: suffixCount.value as Exclude<InputVariants['suffix'], null | undefined>,
+    }),
     props.class,
   ),
 )
@@ -102,6 +114,7 @@ function onClear() {
       :autocomplete="autocomplete"
       :disabled="disabled"
       :class="inputClass"
+      v-bind="attrs"
       @input="onInput"
       @keyup.enter="$emit('enter')"
     />

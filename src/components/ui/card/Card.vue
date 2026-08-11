@@ -1,5 +1,9 @@
 <script setup lang="ts">
+/**
+ * 卡片容器：用于将相关内容分组展示，提供统一的背景、边框与圆角。
+ */
 import { cn } from '@/utils/cn'
+import { cardVariants } from './cardVariants'
 
 interface Props {
   class?: string
@@ -11,14 +15,7 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div
-    :class="
-      cn(
-        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-border shadow-sm',
-        $props.class,
-      )
-    "
-  >
+  <div :class="cn(cardVariants(), $props.class)">
     <slot />
   </div>
 </template>

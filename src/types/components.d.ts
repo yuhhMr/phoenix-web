@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Badge: typeof import('./../components/ui/badge/Badge.vue')['default']
     Button: typeof import('./../components/ui/button/Button.vue')['default']
     Card: typeof import('./../components/ui/card/Card.vue')['default']
     CardContent: typeof import('./../components/ui/card/CardContent.vue')['default']
@@ -92,6 +93,5 @@ declare module 'vue' {
     TooltipProvider: typeof import('./../components/ui/tooltip/TooltipProvider.vue')['default']
     TooltipRoot: typeof import('./../components/ui/tooltip/TooltipRoot.vue')['default']
     TooltipTrigger: typeof import('./../components/ui/tooltip/TooltipTrigger.vue')['default']
-    UiBadge: typeof import('./../components/ui/badge/UiBadge.vue')['default']
   }
 }

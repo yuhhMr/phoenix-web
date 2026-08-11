@@ -6,7 +6,8 @@
       <form class="login-form" @submit.prevent="handleLogin">
         <Input
           v-model="form.username"
-          class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
+          size="lg"
+          class="bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
           :placeholder="$t('login.username')"
           autocomplete="username"
         >
@@ -16,7 +17,8 @@
         <Input
           v-model="form.password"
           type="password"
-          class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
+          size="lg"
+          class="bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
           :placeholder="$t('login.password')"
           autocomplete="current-password"
         >
@@ -26,7 +28,8 @@
         <div class="captcha-row">
           <Input
             v-model="form.captchaCode"
-            class="h-11 bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
+            size="lg"
+            class="bg-white/90 text-slate-800 placeholder:text-slate-400 border-white/40 focus:bg-white focus:border-primary"
             :placeholder="$t('login.captcha')"
             :maxlength="4"
           >
