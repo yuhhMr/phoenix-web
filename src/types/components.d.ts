@@ -11,9 +11,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppButton: typeof import('./../components/AppButton.vue')['default']
-    AppInput: typeof import('./../components/AppInput.vue')['default']
-    AppModal: typeof import('./../components/AppModal.vue')['default']
     Button: typeof import('./../components/ui/button/Button.vue')['default']
     Card: typeof import('./../components/ui/card/Card.vue')['default']
     CardContent: typeof import('./../components/ui/card/CardContent.vue')['default']
@@ -22,7 +19,7 @@ declare module 'vue' {
     CardHeader: typeof import('./../components/ui/card/CardHeader.vue')['default']
     CardTitle: typeof import('./../components/ui/card/CardTitle.vue')['default']
     Checkbox: typeof import('./../components/ui/checkbox/Checkbox.vue')['default']
-    DataTable: typeof import('./../components/DataTable.vue')['default']
+    DataTable: typeof import('./../components/ui/data-table/DataTable.vue')['default']
     DialogClose: typeof import('./../components/ui/dialog/DialogClose.vue')['default']
     DialogContent: typeof import('./../components/ui/dialog/DialogContent.vue')['default']
     DialogDescription: typeof import('./../components/ui/dialog/DialogDescription.vue')['default']

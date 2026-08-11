@@ -23,7 +23,7 @@
     </ul>
     <div v-else class="py-8 text-center text-text-secondary">暂无数据</div>
 
-    <AppModal v-model="modalVisible" :title="isEdit ? '编辑组织' : '新增组织'" :loading="saving" @submit="save">
+    <DialogModal v-model:open="modalVisible" :title="isEdit ? '编辑组织' : '新增组织'" :loading="saving" @submit="save">
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">上级组织</label>
@@ -70,7 +70,7 @@
           </select>
         </div>
       </div>
-    </AppModal>
+    </DialogModal>
   </div>
 </template>
 
@@ -79,7 +79,7 @@
 defineOptions({ name: 'Org' })
 import { ref, computed, onMounted } from 'vue'
 import OrgTreeNode from './OrgTreeNode.vue'
-import AppModal from '@/components/AppModal.vue'
+import { DialogModal } from '@/components/ui/dialog'
 import { fetchOrgTree, createOrg, updateOrg, deleteOrg, type OrgTreeItem } from '@/api/org'
 
 const tree = ref<OrgTreeItem[]>([])

@@ -47,7 +47,7 @@
       :size="query.pageSize"
     />
 
-    <AppModal v-model="modalVisible" :title="isEdit ? '编辑消息' : '新增消息'" :loading="saving" @submit="save">
+    <DialogModal v-model:open="modalVisible" :title="isEdit ? '编辑消息' : '新增消息'" :loading="saving" @submit="save">
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">标题</label>
@@ -106,7 +106,7 @@
           ></textarea>
         </div>
       </div>
-    </AppModal>
+    </DialogModal>
   </div>
 </template>
 
@@ -115,8 +115,8 @@
 defineOptions({ name: 'Notice' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
-import DataTable from '@/components/DataTable.vue'
-import AppModal from '@/components/AppModal.vue'
+import { DataTable } from '@/components/ui/data-table'
+import { DialogModal } from '@/components/ui/dialog'
 import { usePermissionStore } from '@/store/permission'
 import {
   fetchNoticePage,

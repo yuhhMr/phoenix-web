@@ -23,7 +23,7 @@
     </ul>
     <div v-else class="py-8 text-center text-text-secondary">暂无数据</div>
 
-    <AppModal v-model="modalVisible" :title="isEdit ? '编辑菜单' : '新增菜单'" :loading="saving" @submit="save">
+    <DialogModal v-model:open="modalVisible" :title="isEdit ? '编辑菜单' : '新增菜单'" :loading="saving" @submit="save">
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">上级菜单</label>
@@ -115,7 +115,7 @@
           </select>
         </div>
       </div>
-    </AppModal>
+    </DialogModal>
   </div>
 </template>
 
@@ -124,7 +124,7 @@
 defineOptions({ name: 'SystemMenu' })
 import { ref, computed, onMounted } from 'vue'
 import MenuTreeNode from './MenuTreeNode.vue'
-import AppModal from '@/components/AppModal.vue'
+import { DialogModal } from '@/components/ui/dialog'
 import { fetchMenuTree, createMenu, updateMenu, deleteMenu, type MenuTreeItem } from '@/api/menu'
 
 const tree = ref<MenuTreeItem[]>([])

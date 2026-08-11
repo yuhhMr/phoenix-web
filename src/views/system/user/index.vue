@@ -48,7 +48,7 @@
     />
 
     <!-- 新增/编辑 -->
-    <AppModal v-model="modalVisible" :title="isEdit ? '编辑用户' : '新增用户'" :loading="saving" @submit="save">
+    <DialogModal v-model:open="modalVisible" :title="isEdit ? '编辑用户' : '新增用户'" :loading="saving" @submit="save">
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">用户名</label>
@@ -111,7 +111,7 @@
           ></textarea>
         </div>
       </div>
-    </AppModal>
+    </DialogModal>
   </div>
 </template>
 
@@ -120,8 +120,8 @@
 defineOptions({ name: 'User' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
-import DataTable from '@/components/DataTable.vue'
-import AppModal from '@/components/AppModal.vue'
+import { DataTable } from '@/components/ui/data-table'
+import { DialogModal } from '@/components/ui/dialog'
 import { usePermissionStore } from '@/store/permission'
 import { fetchUserPage, createUser, updateUser, deleteUser, updateUserStatus, type UserItem } from '@/api/user'
 import type { PageRes } from '@/types/api'

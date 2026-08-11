@@ -46,7 +46,7 @@
 defineOptions({ name: 'Log' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
-import DataTable from '@/components/DataTable.vue'
+import { DataTable } from '@/components/ui/data-table'
 import { fetchLogPage, type LogItem } from '@/api/log'
 import type { PageRes } from '@/types/api'
 

@@ -38,7 +38,7 @@
       :size="query.pageSize"
     />
 
-    <AppModal v-model="modalVisible" :title="isEdit ? '编辑任务' : '新增任务'" :loading="saving" @submit="save">
+    <DialogModal v-model:open="modalVisible" :title="isEdit ? '编辑任务' : '新增任务'" :loading="saving" @submit="save">
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium mb-1">任务名称</label>
@@ -99,7 +99,7 @@
           ></textarea>
         </div>
       </div>
-    </AppModal>
+    </DialogModal>
   </div>
 </template>
 
@@ -108,8 +108,8 @@
 defineOptions({ name: 'Job' })
 import { reactive, ref, watch } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
-import DataTable from '@/components/DataTable.vue'
-import AppModal from '@/components/AppModal.vue'
+import { DataTable } from '@/components/ui/data-table'
+import { DialogModal } from '@/components/ui/dialog'
 import { usePermissionStore } from '@/store/permission'
 import { fetchJobPage, createJob, updateJob, deleteJob, changeJobStatus, runJobOnce, type JobItem } from '@/api/job'
 import type { PageRes } from '@/types/api'
