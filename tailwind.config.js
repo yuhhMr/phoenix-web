@@ -1,66 +1,102 @@
 /**
  * Tailwind CSS 配置入口。
  *
- * 本文件解决什么问题：
- * - 声明 Tailwind 扫描范围（content），只有这些文件里出现的类名才会被打包；
- * - 扩展主题色（primary / background / surface / border / text 等），
- *   与 src/style.css 和 layout 组件共同构成项目设计系统；
- * - 当前主题色为静态令牌，后续若要做「设置面板切换主题色」，
- *   可改为 CSS 变量并在本文件引用。
+ * 本文件职责：
+ * - 声明 Tailwind 扫描范围（content）。
+ * - 把 src/style.css 中定义的 CSS 变量（Design Tokens）映射为 Tailwind 工具类。
+ * - 主题切换（浅色/暗色/品牌色）完全由 CSS 变量驱动，本文件只负责引用，不硬编码色值。
+ *
+ * 设计令牌来源：src/style.css
+ * - 颜色变量使用 HSL 分量形式，如 --primary: 217.2 91.2% 59.8%
+ * - Tailwind 通过 hsl(var(--primary) / <alpha-value>) 解析，支持 bg-primary/50 等透明度写法
  *
  * 修改注意点：
- * - 新增页面/组件后无需改 content（已覆盖 src 下所有 vue/ts）；
- * - 新增颜色变量时，同步更新 src/style.css 中可能硬编码的色值。
+ * - 新增颜色时，先在 style.css 定义变量，再在这里添加映射。
+ * - 不要在本文件写死 hex/rgb，避免破坏主题切换能力。
  */
+
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        background: '#f8fafc',
-        foreground: '#1e293b',
+        background: 'hsl(var(--background) / <alpha-value>)',
+        foreground: 'hsl(var(--foreground) / <alpha-value>)',
         card: {
-          DEFAULT: '#ffffff',
-          foreground: '#1e293b',
+          DEFAULT: 'hsl(var(--card) / <alpha-value>)',
+          foreground: 'hsl(var(--card-foreground) / <alpha-value>)',
         },
         popover: {
-          DEFAULT: '#ffffff',
-          foreground: '#1e293b',
+          DEFAULT: 'hsl(var(--popover) / <alpha-value>)',
+          foreground: 'hsl(var(--popover-foreground) / <alpha-value>)',
         },
         primary: {
-          DEFAULT: '#2563eb',
-          dark: '#1d4ed8',
-          foreground: '#ffffff',
+          DEFAULT: 'hsl(var(--primary) / <alpha-value>)',
+          foreground: 'hsl(var(--primary-foreground) / <alpha-value>)',
+          dark: 'hsl(var(--primary-hover) / <alpha-value>)',
+          hover: 'hsl(var(--primary-hover) / <alpha-value>)',
         },
         secondary: {
-          DEFAULT: '#f1f5f9',
-          foreground: '#1e293b',
+          DEFAULT: 'hsl(var(--secondary) / <alpha-value>)',
+          foreground: 'hsl(var(--secondary-foreground) / <alpha-value>)',
         },
         muted: {
-          DEFAULT: '#f1f5f9',
-          foreground: '#64748b',
+          DEFAULT: 'hsl(var(--muted) / <alpha-value>)',
+          foreground: 'hsl(var(--muted-foreground) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: '#f1f5f9',
-          foreground: '#1e293b',
+          DEFAULT: 'hsl(var(--accent) / <alpha-value>)',
+          foreground: 'hsl(var(--accent-foreground) / <alpha-value>)',
         },
         destructive: {
-          DEFAULT: '#ef4444',
-          foreground: '#ffffff',
+          DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
+          foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
         },
-        border: '#e2e8f0',
+        border: 'hsl(var(--border) / <alpha-value>)',
         input: {
-          DEFAULT: '#e2e8f0',
-          background: '#ffffff',
+          DEFAULT: 'hsl(var(--input) / <alpha-value>)',
+          background: 'hsl(var(--input-background) / <alpha-value>)',
         },
-        ring: '#2563eb',
-        surface: '#ffffff',
-        text: '#1e293b',
-        'text-secondary': '#64748b',
+        ring: 'hsl(var(--ring) / <alpha-value>)',
+        surface: {
+          DEFAULT: 'hsl(var(--surface) / <alpha-value>)',
+          foreground: 'hsl(var(--surface-foreground) / <alpha-value>)',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success) / <alpha-value>)',
+          foreground: 'hsl(var(--success-foreground) / <alpha-value>)',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning) / <alpha-value>)',
+          foreground: 'hsl(var(--warning-foreground) / <alpha-value>)',
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info) / <alpha-value>)',
+          foreground: 'hsl(var(--info-foreground) / <alpha-value>)',
+        },
+        // 兼容旧变量，新代码优先使用 foreground / muted-foreground
+        text: {
+          DEFAULT: 'hsl(var(--text) / <alpha-value>)',
+          secondary: 'hsl(var(--text-secondary) / <alpha-value>)',
+        },
         switch: {
-          background: '#d1d5db',
+          background: 'hsl(var(--muted) / <alpha-value>)',
         },
+      },
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+      },
+      boxShadow: {
+        sm: 'var(--shadow-sm)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
       },
     },
   },

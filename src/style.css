@@ -1,7 +1,145 @@
+/*
+ * Phoenix Design System
+ *
+ * 本文件是项目的设计令牌（Design Tokens）源头：
+ * - 所有颜色、圆角、阴影、间距等视觉常量统一以 CSS 自定义属性（--*）声明。
+ * - Tailwind 配置（tailwind.config.js）只负责把这些变量映射到工具类，不直接写死色值。
+ * - 主题切换（如暗色模式、品牌色切换）通过修改变量实现，业务代码零改动。
+ *
+ * 设计原则：
+ * 1. 语义化命名：使用 background、foreground、primary、destructive 等语义名，而非具体色值。
+ * 2. 成对定义：每个背景色对应一个 foreground（文字/图标色），保证对比度。
+ * 3. 单一事实来源：本文件是颜色/尺寸的唯一来源，组件代码只引用 Tailwind 类名。
+ */
+
 /* Tailwind CSS 指令：注入基础样式、组件类、工具类 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ================================ 基础设计令牌 ================================ */
+:root {
+  /* 圆角：统一控制组件圆角风格 */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* 阴影：用于卡片、弹窗、下拉等浮层 */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* 间距：保持 4px 基准网格 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* ================================ 浅色主题（默认） ================================ */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  /* 卡片：页面内容卡片、面板 */
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  /* 浮层：下拉菜单、弹窗、提示框 */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  /* 主色：品牌色，用于主要按钮、链接、激活态 */
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 0 0% 100%;
+  --primary-hover: 221.2 83.2% 53.3%;
+
+  /* 次要色：次级按钮、标签、背景高亮 */
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  /* 弱化：禁用、次要文字、骨架屏 */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  /* 强调：悬浮、选中、聚焦背景 */
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  /* 破坏：删除、错误、危险操作 */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* 边框、输入框、焦点环 */
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --input-background: 0 0% 100%;
+  --ring: 217.2 91.2% 59.8%;
+
+  /* 表面色：侧边栏、头部等大面积区域 */
+  --surface: 0 0% 100%;
+  --surface-foreground: 222.2 84% 4.9%;
+
+  /* 文字：兼容旧变量，后续逐步迁移到 foreground */
+  --text: 222.2 84% 4.9%;
+  --text-secondary: 215.4 16.3% 46.9%;
+
+  /* 成功、警告、信息（扩展语义） */
+  --success: 142.1 76.2% 36.3%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 0%;
+  --info: 217.2 91.2% 59.8%;
+  --info-foreground: 0 0% 100%;
+}
+
+/* ================================ 暗色主题 ================================ */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --primary-hover: 213.1 93.9% 67.8%;
+
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --input-background: 222.2 84% 4.9%;
+  --ring: 224.3 76.3% 48%;
+
+  --surface: 222.2 84% 4.9%;
+  --surface-foreground: 210 40% 98%;
+
+  --text: 210 40% 98%;
+  --text-secondary: 215 20.2% 65.1%;
+}
+
+/* ================================ 全局基础样式 ================================ */
 
 /* 全屏布局：html/body/#app 均占满视口高度 */
 html,
@@ -10,7 +148,7 @@ body,
   height: 100%;
 }
 
-/* 全局字体与主题色：使用 Tailwind 配置中定义的颜色令牌 */
+/* 全局字体与主题色 */
 body {
   /* 中英文兼容字体栈：优先使用系统默认中文字体，再回退到西文系统字体 */
   font-family:
@@ -26,17 +164,38 @@ body {
     'Helvetica Neue',
     Arial,
     sans-serif;
-  /* 统一行高，减少中英文混排时行高差异导致的布局抖动 */
+  font-size: 0.875rem;
   line-height: 1.5;
-  /* 优化字体渲染，避免中英文切换时笔画粗细不一致 */
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: theme('colors.text');
-  background-color: theme('colors.background');
 }
 
 /* 防止英文长单词撑破布局，同时保证中文正常换行 */
 body * {
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+/* 统一 focus-visible 样式：所有可聚焦元素使用主题色焦点环 */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring) / 0.5);
+  outline-offset: 2px;
+}
+
+/* 滚动条：使用半透明风格，减少视觉干扰 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
 }
