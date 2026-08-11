@@ -1,28 +1,34 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import type { LoginInfoRes } from '@/api/auth'
 import { usePermissionStore } from './permission'
 import { useTabsStore } from './tabs'
 
+// 用户会话状态管理（token、用户信息、权限快捷判断）
 export const useUserStore = defineStore(
   'user',
   () => {
     const token = ref<string | null>(null)
-    const userInfo = ref<any>(null)
+    const userInfo = ref<LoginInfoRes | null>(null)
 
     const setToken = (t: string) => {
       token.value = t
     }
 
-    const setUserInfo = (info: any) => {
+    const setUserInfo = (info: LoginInfoRes) => {
       userInfo.value = info
     }
 
-    /**
-     * 会话级状态的统一回收口：Navbar 退出登录、request.ts 的 401 强制回跳
-     * 都汇聚到这里，因此 permission/tabs 的清空放在这一层联动，
-     * 而不是散落在各调用点——permission 与 tabs 和用户态同生命周期，
-     * 换一个账号登录时绝不能残留上一个账号的权限与页签。
-     */
+    // 是否已登录
+    const isAuthenticated = computed(() => !!token.value)
+
+    // 当前用户权限标识列表
+    const perms = computed(() => userInfo.value?.perms ?? [])
+
+    // 是否为超级管理员
+    const isRoot = computed(() => userInfo.value?.root === true)
+
+    // 会话级状态统一回收：Navbar 退出、request 401 回跳都汇聚到这里
     const logout = () => {
       token.value = null
       userInfo.value = null
@@ -30,7 +36,16 @@ export const useUserStore = defineStore(
       useTabsStore().reset()
     }
 
-    return { token, userInfo, setToken, setUserInfo, logout }
+    return {
+      token,
+      userInfo,
+      setToken,
+      setUserInfo,
+      logout,
+      isAuthenticated,
+      perms,
+      isRoot,
+    }
   },
   {
     persist: true,

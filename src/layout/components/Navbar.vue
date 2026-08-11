@@ -117,7 +117,7 @@ import { onClickOutside, useFullscreen } from '@vueuse/core'
 import { useAppStore } from '@/store/app'
 import { useUserStore } from '@/store/user'
 import { usePermissionStore } from '@/store/permission'
-import { buildMenuTree, type MenuItem } from '@/router/utils'
+import type { MenuItem } from '@/router/utils'
 
 const route = useRoute()
 const router = useRouter()
@@ -134,15 +134,8 @@ interface BreadcrumbItem {
   isCurrent: boolean
 }
 
-/**
- * 菜单树（面包屑查找的数据源）。
- * permission store 不引 router（避免 store→router→guards→store 循环依赖），
- * 菜单树由 buildMenuTree 从静态路由现算，与 Sidebar 同源——perms 变化时 computed 自动重算。
- */
-const menuTree = computed<MenuItem[]>(() => {
-  const layoutRoute = router.options.routes.find((r) => r.path === '/')
-  return buildMenuTree(layoutRoute?.children ?? [], permissionStore.hasPerm)
-})
+// 菜单树（面包屑查找的数据源）：与 Sidebar 同源，来自后端菜单树生成的动态路由
+const menuTree = computed<MenuItem[]>(() => permissionStore.menuTree)
 
 // 从菜单树中查找路径对应的菜单项；
 // MenuItem.title 在 buildMenuTree 时已解析，此处直接取用

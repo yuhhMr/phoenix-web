@@ -140,12 +140,7 @@ const handleLogin = async () => {
     })
     userStore.setToken(res.token)
     const info = await getLoginInfo()
-    userStore.setUserInfo({
-      userId: info.userId,
-      username: info.username,
-      nickname: info.nickname,
-      root: info.root,
-    })
+    userStore.setUserInfo(info)
     permissionStore.setPerms(info.perms || [])
 
     // 记住我：只存用户名，口令永不落盘
