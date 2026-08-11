@@ -15,9 +15,14 @@
 
 - [Phoenix UI 组件库](#phoenix-ui-组件库)
   - [设计原则](#设计原则)
+  - [组件实现模式](#组件实现模式)
+    - [模式一：样式变体分离](#模式一样式变体分离)
+    - [模式二：Headless Primitive 封装](#模式二headless-primitive-封装)
+    - [模式三：纯样式 / 布局组件](#模式三纯样式--布局组件)
   - [设计令牌与主题](#设计令牌与主题)
     - [令牌分层](#令牌分层)
     - [浅色 / 暗色切换](#浅色--暗色切换)
+  - [主题与皮肤定制](#主题与皮肤定制)
   - [组件目录](#组件目录)
     - [Button 按钮](#button-按钮)
     - [Input 输入框](#input-输入框)
@@ -48,7 +53,7 @@
    组件代码中不出现 hex / rgb 硬编码，统一使用 `bg-primary`、`text-muted-foreground`、`border-input` 等语义类名。主题切换只需修改变量，业务代码零改动。
 
 2. **样式变体集中管理**
-   Button / Input / Card / Badge 等组件的样式逻辑抽离到 `*Variants.ts`，由 `cva` 统一维护。组件文件只负责：状态计算、事件转发、插槽渲染。
+   组件按自身复杂度选择实现模式：简单展示组件使用 `*.vue` + `*Variants.ts` 分离样式与行为；复杂交互组件基于 ark-ui headless primitive 封装；纯样式组件直接维护 Tailwind 类名。所有样式均通过语义 token 组合，便于后续皮肤定制。
 
 3. **最小可组合单元**
    复杂组件拆分为多个可单独使用的小组件（如 Card = CardHeader + CardTitle + CardContent + CardFooter），避免 props 爆炸。
@@ -57,6 +62,57 @@
    - 所有可交互组件提供 `focus-visible` 焦点环。
    - Loading 状态自动禁用并显示 spinner，避免重复提交。
    - 输入框清空、密码可视化等高频交互内聚到组件内部。
+
+---
+
+## 组件实现模式
+
+本组件库按复杂度把组件分为三类实现模式。理解模式后再做皮肤定制或新增组件，可以少走弯路。
+
+### 模式一：样式变体分离
+
+适用组件：**Button / Input / Badge / Card**
+
+- `*Variants.ts`：使用 `class-variance-authority` 定义所有视觉变体，是组件的“样式单一事实来源”。
+- `*.vue`：负责状态计算、事件转发、插槽渲染；通过 `cn(...)` 把变体类名与外部 `class` 合并。
+
+典型结构：
+
+```text
+src/components/ui/button/
+├── buttonVariants.ts   # 样式：variant / size / color / focus ring
+├── Button.vue          # 行为：loading / disabled / as-child / spinner
+└── index.ts            # 统一导出
+```
+
+**为什么这样设计**：当客户需要换肤时，只要改 `*Variants.ts` 里的 Tailwind 类名（或改 `src/style.css` 变量），不需要动组件行为代码。新增变体也只需扩展 `cva` 配置。
+
+### 模式二：Headless Primitive 封装
+
+适用组件：**Dialog / Select / DropdownMenu / Tabs / Tooltip / Checkbox / Switch**
+
+- 交互逻辑（焦点管理、键盘导航、弹出层定位、无障碍属性）全部交给 [ark-ui/vue](https://ark-ui.com/)。
+- `*.vue` 只做一件事：用 Tailwind 类名包裹 ark-ui primitive，定义视觉表现。
+
+典型结构：
+
+```text
+src/components/ui/select/
+├── SelectRoot.vue      # 对 ark-ui SelectRoot 的样式封装
+├── SelectTrigger.vue
+├── SelectContent.vue
+├── SelectItem.vue
+└── index.ts
+```
+
+**为什么这样设计**：复杂交互自己写成本高、易出 bug。ark-ui 已经处理妥当好交互，我们专注于视觉一致性。换肤时，修改这些 `.vue` 文件里的 Tailwind 类名即可。
+
+### 模式三：纯样式 / 布局组件
+
+适用组件：**Label / Separator / Skeleton / Form 系列**
+
+- 无复杂交互，也无多变体。
+- `*.vue` 直接维护 Tailwind 类名，不引入 `cva` 或 ark-ui。
 
 ---
 
@@ -106,6 +162,69 @@ export function useTheme() {
 ```
 
 > 业务代码中不要直接引用 `--background` 等 CSS 变量，应通过 Tailwind 语义类名（`bg-background`、`text-foreground`）使用。
+
+---
+
+## 主题与皮肤定制
+
+本组件库的皮肤定制分为四个层级，从全局到局部逐步覆盖。
+
+### 1. 全局变量换肤（推荐）
+
+修改 `src/style.css` 中的 CSS 变量即可改变整套 UI 的色盘、圆角、阴影。
+
+```css
+:root {
+  --primary: 221 83% 53%; /* 品牌主色 */
+  --radius-md: 0.5rem; /* 圆角 */
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1); /* 阴影 */
+}
+```
+
+所有组件的 `bg-primary`、`rounded-md`、`shadow-md` 等类名会自动跟随，业务代码无需改动。
+
+### 2. 暗色 / 品牌主题
+
+- 暗色主题：在 `.dark` 选择器中覆盖变量，通过 `<html class="dark">` 切换。
+- 品牌主题：可以新增 `.theme-red`、`.theme-green` 等类，在同一文件覆盖主色变量，业务侧通过切换 body/html 的 class 生效。
+
+### 3. 组件变体换肤（模式一组件）
+
+对于 Button / Input / Badge / Card，直接修改对应 `*Variants.ts`：
+
+```ts
+// src/components/ui/button/buttonVariants.ts
+export const buttonVariants = cva('...', {
+  variants: {
+    variant: {
+      default: 'bg-primary text-primary-foreground hover:bg-primary-hover',
+      // 新增客户定制变体
+      brand: 'bg-brand text-white hover:bg-brand-dark',
+    },
+  },
+})
+```
+
+新增变体后，TypeScript 类型会自动推导，业务代码可立即使用 `<Button variant="brand">`。
+
+### 4. 单点样式覆盖
+
+所有组件都支持 `class` prop，业务层可通过 Tailwind 工具类做一次性覆盖：
+
+```vue
+<Button class="w-full tracking-[6px]">登录</Button>
+<Input class="h-11" />
+```
+
+对于模式二（ark-ui 封装）和模式三组件，直接修改对应 `.vue` 文件里的 Tailwind 类名即可。
+
+### 5. 新增组件的皮肤一致性
+
+新增组件时，请按以下顺序取色：
+
+1. 优先使用语义 token：`bg-background`、`text-foreground`、`border-input`、`bg-primary`、`text-destructive` 等。
+2. 若语义 token 不够用，先在 `src/style.css` 定义新变量，再在 `tailwind.config.js` 映射，最后在组件中引用。
+3. 禁止在组件中写死 hex / rgb，避免破坏主题切换能力。
 
 ---
 
